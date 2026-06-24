@@ -9,7 +9,19 @@ import { Input } from "@/components/ui/input";
 export default function LoginPage() {
   const router = useRouter();
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(() => {
+    if (typeof window === "undefined") return "";
+    const code = new URLSearchParams(window.location.search).get("error");
+    if (!code) return "";
+    const messages: Record<string, string> = {
+      google_not_configured: "Google Login chưa được cấu hình trên server.",
+      google_state_invalid: "Phiên đăng nhập Google đã hết hạn. Hãy thử lại.",
+      google_token_failed: "Không lấy được token từ Google. Hãy thử lại.",
+      google_verify_failed: "Không xác minh được tài khoản Google.",
+      google_account_not_allowed: "Tài khoản Google này chưa được phép truy cập.",
+    };
+    return messages[code] ?? "Đăng nhập Google thất bại";
+  });
   const [loading, setLoading] = useState(false);
 
   async function submit(e: React.FormEvent) {
@@ -71,6 +83,22 @@ export default function LoginPage() {
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
           Đăng nhập
         </Button>
+
+        <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground">
+          <span className="h-px flex-1 bg-border" />
+          hoặc
+          <span className="h-px flex-1 bg-border" />
+        </div>
+
+        <a
+          href="/api/auth/google"
+          className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-[var(--radius)] border border-border bg-background px-4 text-sm font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white font-bold text-[#4285f4] shadow-sm">
+            G
+          </span>
+          Đăng nhập bằng Google
+        </a>
       </form>
     </div>
   );

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đạo Hàm Trực Quan</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+  <style>
+    :root{--bg:#07111f;--panel:#0d1b2f;--fg:#eef6ff;--muted:#a8b7cf;--line:#1f3554;--accent:#22d3ee;--accent2:#fb923c;--radius:20px}
+    *{box-sizing:border-box}
+    body{margin:0;background:radial-gradient(900px 500px at 80% -10%,#164e63,transparent),var(--bg);color:var(--fg);font:17px/1.75 system-ui,Segoe UI,Roboto,sans-serif}
+    .container{max-width:980px;margin:0 auto;padding:56px 24px}
+    h1{font-size:clamp(2.5rem,6vw,4.8rem);line-height:1.02;margin:0 0 16px;font-weight:900;letter-spacing:-.04em}
+    .lead{max-width:760px;color:var(--muted);font-size:1.18rem}
+    .panel{margin:30px 0;padding:28px;border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,#0d1b2f,#091426)}
+    .equation{padding:20px;border-radius:16px;background:#081120;border:1px solid #244768;overflow:auto}
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}
+    svg{width:100%;height:auto;display:block}
+    .card{padding:20px;border-radius:16px;border:1px solid var(--line);background:#10223a}
+    .accent{color:var(--accent)}
+    @media(max-width:780px){.grid{grid-template-columns:1fr}.container{padding:38px 18px}}
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Đạo hàm là <span class="accent">độ dốc tức thời</span></h1>
+    <p class="lead">
+      Nếu tốc độ trung bình đo trên một đoạn, đạo hàm đo tốc độ tại một điểm.
+      Ý tưởng trung tâm là cho khoảng cách $h$ tiến dần về $0$.
+    </p>
+    <section class="panel">
+      <h2>Định nghĩa</h2>
+      <div class="equation">
+        $$f'(a)=\lim_{h\to 0}\frac{f(a+h)-f(a)}{h}$$
+      </div>
+      <p>Trong đó $\frac{f(a+h)-f(a)}{h}$ là độ dốc của cát tuyến, còn $f'(a)$ là độ dốc của tiếp tuyến.</p>
+    </section>
+    <section class="grid">
+      <div class="panel">
+        <svg viewBox="0 0 640 420" role="img" aria-label="Đồ thị minh họa tiếp tuyến">
+          <defs>
+            <linearGradient id="curve" x1="0" x2="1">
+              <stop stop-color="#22d3ee"/><stop offset="1" stop-color="#a3e635"/>
+            </linearGradient>
+          </defs>
+          <rect x="20" y="20" width="600" height="360" rx="20" fill="#07111f" stroke="#244768"/>
+          <path d="M70 320 C170 250 210 210 275 218 S380 125 530 120" fill="none" stroke="url(#curve)" stroke-width="8" stroke-linecap="round"/>
+          <line x1="120" y1="330" x2="500" y2="90" stroke="#fb923c" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="320" cy="205" r="11" fill="#22d3ee" stroke="#eef6ff" stroke-width="5"/>
+          <circle cx="430" cy="145" r="11" fill="#fb923c" stroke="#eef6ff" stroke-width="5"/>
+          <text x="390" y="92" fill="#c7d2fe" font-size="22" font-weight="700">tiếp tuyến</text>
+          <text x="90" y="355" fill="#a8b7cf" font-size="18">h càng nhỏ, cát tuyến càng gần tiếp tuyến</text>
+        </svg>
+      </div>
+      <aside class="panel">
+        <h2>Ví dụ nhanh</h2>
+        <p>Với $f(x)=x^2$:</p>
+        <div class="equation">$$f'(a)=2a$$</div>
+        <p>Tại $a=3$, độ dốc tức thời là $f'(3)=6$.</p>
+      </aside>
+    </section>
+    <section class="panel">
+      <h2>Cách nhớ</h2>
+      <div class="grid">
+        <div class="card"><strong>$h$</strong><br>khoảng cách co lại</div>
+        <div class="card"><strong>$\Delta y / \Delta x$</strong><br>độ dốc cát tuyến</div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

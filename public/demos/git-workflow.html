@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Làm việc với GitHub</title>
+  <style>
+    :root{--bg:#fff7ed;--fg:#3b1f0b;--muted:#8a6047;--line:#fed7aa;--accent:#f97316;--teal:#5eead4;--violet:#8b5cf6;--radius:22px}
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(135deg,#fff7ed,#fff1f2);color:var(--fg);font:17px/1.7 "Segoe UI",system-ui,sans-serif}
+    .container{max-width:980px;margin:0 auto;padding:54px 22px}
+    .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:center;border:3px solid #fed7aa;border-radius:32px;padding:34px;background:#fffaf3;box-shadow:0 8px 0 #fdba74}
+    h1{font-size:clamp(2.4rem,6vw,4.3rem);line-height:1.12;margin:0 0 18px;font-weight:900;color:#fb6d17}
+    p{color:var(--muted)}
+    .mascot{display:grid;place-items:center;min-height:260px;border-radius:30px;background:#111827;color:#fff;font-size:5rem;box-shadow:10px 12px 0 rgba(15,23,42,.18);transform:rotate(-4deg)}
+    .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.chip{padding:.55rem .9rem;border-radius:999px;border:2px solid var(--line);background:#fff;font-weight:800}
+    h2{font-size:1.8rem;margin:48px 0 20px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+    .card{padding:22px;border:2px solid var(--line);border-radius:var(--radius);background:#fff;box-shadow:0 5px 0 var(--line)}
+    .card:nth-child(2){background:#ccfbf1;border-color:#5eead4;box-shadow:0 5px 0 #5eead4}
+    .card:nth-child(3){background:#ede9fe;border-color:#c4b5fd;box-shadow:0 5px 0 #c4b5fd}
+    .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:22px}.step{padding:14px;border-radius:16px;background:#fff;border:2px solid var(--line);text-align:center;font-weight:850}
+    @media(max-width:780px){.hero,.grid{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.mascot{min-height:180px}.container{padding:34px 16px}}
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <div>
+        <div class="chip">Tài liệu nhập môn</div>
+        <h1>Làm việc với GitHub: từ cá nhân đến teamwork</h1>
+        <p>
+          GitHub không chỉ là nơi lưu code. Đây là sân chơi trung tâm để lập trình viên quản lý phiên bản,
+          trao đổi, review, theo dõi tiến độ, tự động kiểm thử và triển khai sản phẩm.
+        </p>
+        <div class="chips">
+          <span class="chip">Git & Branch</span>
+          <span class="chip">Pull Request</span>
+          <span class="chip">CI/CD</span>
+          <span class="chip">Agile</span>
+        </div>
+      </div>
+      <div class="mascot" aria-hidden="true">⌘</div>
+    </section>
+    <section>
+      <h2>1. GitHub là gì?</h2>
+      <div class="grid">
+        <article class="card"><h3>Git</h3><p>Công cụ quản lý phiên bản. Git ghi lại lịch sử thay đổi để bạn quay lại, so sánh và làm việc song song.</p></article>
+        <article class="card"><h3>GitHub</h3><p>Nền tảng lưu repository trên cloud, hỗ trợ Issues, Pull Requests, Projects, Actions và Wiki.</p></article>
+        <article class="card"><h3>Branch</h3><p>Một nhánh làm việc riêng để thử nghiệm mà không phá code chính.</p></article>
+        <article class="card"><h3>Pull Request</h3><p>Lời đề nghị nhập code vào nhánh chính, kèm review, comment và kiểm thử tự động.</p></article>
+      </div>
+    </section>
+    <section>
+      <h2>2. Luồng làm việc nhóm</h2>
+      <div class="flow">
+        <div class="step">Issue</div>
+        <div class="step">Branch</div>
+        <div class="step">Commit</div>
+        <div class="step">Pull Request</div>
+        <div class="step">Merge</div>
+      </div>
+      <p><strong>Hiểu nhanh:</strong> Git giống như máy ảnh chụp lịch sử code, còn GitHub là nơi cả nhóm cùng xem, góp ý, kiểm tra và triển khai.</p>
+    </section>
+  </main>
+</body>
+</html>

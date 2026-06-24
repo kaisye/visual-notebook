@@ -2,6 +2,9 @@
 
 ![Visual Notebook overview](images/visual-notebook-overview.png)
 
+Demo HTML files: `/demos/`, `/demos/fastapi-production.html`,
+`/demos/calculus-derivative.html`, `/demos/git-workflow.html`.
+
 Trạm quản lý file **HTML/Markdown/PDF** học tập với **trợ lý AI** — tổ chức trực quan kiểu Notion,
 đọc/ghi trực tiếp file trên ổ đĩa của bạn ngay trong trình duyệt (không upload lên cloud).
 
@@ -41,6 +44,9 @@ Vào ⚙️ Cài đặt → nhập API key của ít nhất một nhà cung cấ
    - `APP_PASSWORD` — mật khẩu đăng nhập (bắt buộc).
    - (tuỳ chọn) `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` / `GOOGLE_GENERATIVE_AI_API_KEY`
      nếu muốn dùng key dùng chung phía máy chủ thay vì nhập trong app.
+   - (tuỳ chọn) `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` để bật đăng nhập Google.
+     Authorized redirect URI: `https://visual-notebook.vercel.app/api/auth/google/callback`.
+   - (tuỳ chọn) `GOOGLE_ALLOWED_EMAILS` / `GOOGLE_ALLOWED_DOMAINS` nếu muốn giới hạn tài khoản Google.
 3. Deploy. Mở domain Vercel bằng Chrome/Edge và đăng nhập.
 
 ## Kiến trúc

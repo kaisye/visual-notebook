@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Visual Notebook Demo Files</title>
+  <style>
+    :root{--bg:#f8fafc;--fg:#0f172a;--muted:#64748b;--line:#e2e8f0;--accent:#159a8c;--accent2:#2563eb;--radius:16px}
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(135deg,#ffffff,#f4fbfa);color:var(--fg);font:16px/1.7 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    main{max-width:960px;margin:0 auto;padding:64px 24px}
+    .eyebrow{color:var(--accent);font:700 .78rem/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.28em;text-transform:uppercase}
+    h1{max-width:780px;margin:18px 0 14px;font-size:clamp(2.6rem,7vw,5rem);line-height:1;font-weight:900;letter-spacing:-.045em}
+    h1 span{color:var(--accent)}
+    p{max-width:700px;color:var(--muted);font-size:1.08rem}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:36px}
+    a.card{display:block;min-height:220px;padding:24px;border:1px solid var(--line);border-radius:var(--radius);background:#fff;color:inherit;text-decoration:none;box-shadow:0 18px 45px -30px rgba(15,23,42,.3);transition:.18s ease}
+    a.card:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
+    .tag{display:inline-flex;border-radius:999px;background:#ecfdf5;color:#047857;padding:.25rem .65rem;font-size:.78rem;font-weight:750}
+    h2{font-size:1.25rem;line-height:1.25;margin:22px 0 10px}
+    .card p{font-size:.95rem;margin:0}
+    code{background:#eef2ff;border-radius:6px;padding:.12em .38em;color:#3730a3}
+    @media(max-width:780px){.grid{grid-template-columns:1fr}main{padding:44px 18px}}
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">Visual Notebook demo</div>
+    <h1>File HTML mẫu để thử <span>AI workspace</span></h1>
+    <p>
+      Đây là vài tài liệu HTML tự chứa. Bạn có thể mở trực tiếp trên Vercel, tải về,
+      rồi chọn một thư mục local chứa các file này trong Visual Notebook để thử xem/sửa/tạo slide.
+    </p>
+    <section class="grid" aria-label="Demo files">
+      <a class="card" href="./fastapi-production.html">
+        <span class="tag">Backend</span>
+        <h2>FastAPI Production Handbook</h2>
+        <p>Tài liệu kỹ thuật kiểu editorial: async, database, security và RAG.</p>
+      </a>
+      <a class="card" href="./calculus-derivative.html">
+        <span class="tag">Math</span>
+        <h2>Đạo Hàm Trực Quan</h2>
+        <p>Có công thức LaTeX/KaTeX, biểu diễn hệ số góc và ví dụ dễ học.</p>
+      </a>
+      <a class="card" href="./git-workflow.html">
+        <span class="tag">Workflow</span>
+        <h2>GitHub Team Workflow</h2>
+        <p>Giải thích Git, branch, pull request, review và CI/CD bằng card trực quan.</p>
+      </a>
+    </section>
+    <p style="margin-top:32px">
+      Gợi ý: lưu các file HTML này vào một thư mục local, mở app, bấm <code>Mở thư mục</code>,
+      rồi thử tab <code>Slides</code> hoặc <code>Sửa bằng AI</code>.
+    </p>
+  </main>
+</body>
+</html>
