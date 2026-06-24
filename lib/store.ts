@@ -198,6 +198,11 @@ export const useWorkspace = create<WorkspaceState>((set, get) => {
     const manifest = await readManifest(roots[0].handle);
     applyRoots(roots, { manifest, status: "connected", error: undefined });
     await setStoredDirectories(handles);
+    try {
+      await get().installDemoFiles();
+    } catch (e) {
+      set({ error: e instanceof Error ? e.message : String(e) });
+    }
   }
 
   return {
@@ -471,7 +476,7 @@ export const useWorkspace = create<WorkspaceState>((set, get) => {
     async installDemoFiles() {
       if (!get().roots.length) throw new Error("Chưa kết nối thư mục");
       const root = get().roots[0];
-      const demoDir = "docs";
+      const demoDir = "demo";
       await ensureDir(root.handle, demoDir);
 
       const demos = [
@@ -483,27 +488,35 @@ export const useWorkspace = create<WorkspaceState>((set, get) => {
       const entries: Array<{ path: string; title: string; theme: string }> = [];
 
       for (const demo of demos) {
+        const relPath = `${demoDir}/${demo.file}`;
+        const virtual = toVirtual(root, relPath);
+        if (await pathExists(root.handle, relPath)) {
+          entries.push({ path: virtual, title: demo.title, theme: demo.theme });
+          continue;
+        }
         const res = await fetch(`/demos/${demo.file}`);
         if (!res.ok) throw new Error(`Không tải được file demo: ${demo.file}`);
         const content = await res.text();
-        const relPath = await uniqueHtmlPath(root.handle, demoDir, demo.title);
         await writeTextFile(root.handle, relPath, content.normalize("NFC"));
-        const virtual = toVirtual(root, relPath);
         created.push(virtual);
         entries.push({ path: virtual, title: demo.title, theme: demo.theme });
       }
 
       await mutate((m) => {
         for (const entry of entries) {
-          m.files[entry.path] = { ...newMeta(), title: entry.title, theme: entry.theme };
+          if (!m.files[entry.path]) {
+            m.files[entry.path] = { ...newMeta(), title: entry.title, theme: entry.theme };
+          }
         }
         return m;
       });
       await get().refresh();
-      set({
-        selection: { type: "folder", path: demoDir },
-        openPath: created[0] ?? null,
-      });
+      if (created.length) {
+        set({
+          selection: { type: "folder", path: demoDir },
+          openPath: created[0],
+        });
+      }
       return created;
     },
 

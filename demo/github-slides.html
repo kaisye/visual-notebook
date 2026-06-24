@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GitHub trong làm việc nhóm, Agile & CI/CD - Slide Deck</title>
+  <style>
+:root{--bg:#fff7ed;--fg:#3b1f0b;--muted:#9a6b4a;--line:#fed7aa;--accent:#f97316;--radius:20px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 "Segoe UI",system-ui,sans-serif}
+.container{max-width:840px;margin:0 auto;padding:48px 24px}
+h1{font-size:2.4rem;font-weight:900;color:var(--accent);margin:0 0 .3em}
+h2{font-size:1.5rem;font-weight:800}
+.card{background:#fff;border:2px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:0 6px 0 var(--line)}
+.pill{display:inline-block;background:var(--accent);color:#fff;border-radius:999px;padding:.25em .9em;font-weight:700}
+
+:root{
+  --pink:#ec4899;
+  --teal:#14b8a6;
+  --yellow:#facc15;
+  --purple:#8b5cf6;
+  --green:#22c55e;
+  --red:#ef4444;
+  --blue:#3b82f6;
+  --soft-pink:#fce7f3;
+  --soft-teal:#ccfbf1;
+  --soft-yellow:#fef9c3;
+  --soft-purple:#ede9fe;
+  --soft-blue:#dbeafe;
+  --orange-soft:#ffedd5;
+  --shadow:#fdba74;
+}
+html,body{height:100%;overflow:hidden}
+body{
+  background:
+    radial-gradient(circle at 12% 14%, rgba(236,72,153,.14), transparent 27%),
+    radial-gradient(circle at 88% 20%, rgba(20,184,166,.16), transparent 28%),
+    radial-gradient(circle at 50% 92%, rgba(250,204,21,.20), transparent 32%),
+    var(--bg);
+}
+.container{
+  width:min(1180px,100vw);
+  max-width:none;
+  height:100vh;
+  padding:18px;
+  display:grid;
+  grid-template-rows:auto 1fr auto;
+  gap:12px;
+}
+.deck{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  max-height:calc(100vh - 118px);
+  margin:auto;
+  background:linear-gradient(135deg,#fff 0%,#fff7ed 54%,#ffedd5 100%);
+  border:3px solid var(--line);
+  border-radius:32px;
+  box-shadow:0 12px 0 var(--shadow);
+  overflow:hidden;
+}
+.slide{
+  position:absolute;
+  inset:0;
+  padding:clamp(24px,4vw,54px);
+  display:none;
+  overflow:hidden;
+}
+.slide.active{display:grid;align-content:center}
+.slide::before{
+  content:"";
+  position:absolute;
+  right:-70px;
+  top:-70px;
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  background:rgba(249,115,22,.12);
+}
+.slide::after{
+  content:"";
+  position:absolute;
+  left:-80px;
+  bottom:-90px;
+  width:250px;
+  height:250px;
+  border-radius:50%;
+  background:rgba(20,184,166,.12);
+}
+.slide > *{position:relative;z-index:1}
+.slide-title{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:20px;
+}
+.icon-bubble{
+  width:54px;
+  height:54px;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+  font-size:1.65rem;
+  color:white;
+  background:var(--accent);
+  box-shadow:0 5px 0 #fdba74;
+  flex:0 0 auto;
+}
+h1{
+  font-size:clamp(2.1rem,5vw,4.7rem);
+  line-height:1.05;
+  letter-spacing:-.04em;
+}
+h2{
+  font-size:clamp(1.55rem,3.1vw,2.8rem);
+  line-height:1.12;
+  margin:0;
+  letter-spacing:-.025em;
+}
+h3{font-size:clamp(1rem,1.6vw,1.25rem);margin:.1rem 0 .35rem}
+p{margin:.35rem 0}
+.lead{
+  font-size:clamp(1rem,1.7vw,1.28rem);
+  color:var(--muted);
+  max-width:780px;
+}
+.big-line{
+  font-size:clamp(1.35rem,2.6vw,2.3rem);
+  font-weight:900;
+  line-height:1.18;
+  margin:.2em 0;
+}
+.grid{display:grid;gap:18px}
+.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{font-size:clamp(.9rem,1.35vw,1.08rem)}
+.card.pink{background:var(--soft-pink);border-color:#f9a8d4;box-shadow:0 6px 0 #f9a8d4}
+.card.teal{background:var(--soft-teal);border-color:#5eead4;box-shadow:0 6px 0 #5eead4}
+.card.yellow{background:var(--soft-yellow);border-color:#fde047;box-shadow:0 6px 0 #fde047}
+.card.purple{background:var(--soft-purple);border-color:#c4b5fd;box-shadow:0 6px 0 #c4b5fd}
+.card.blue{background:var(--soft-blue);border-color:#93c5fd;box-shadow:0 6px 0 #93c5fd}
+.card.orange{background:#ffedd5;border-color:#fdba74;box-shadow:0 6px 0 #fdba74}
+ul,ol{margin:.45rem 0 0;padding-left:1.2rem}
+li{margin:.15rem 0}
+.kbd{
+  display:inline-block;
+  font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
+  background:#431407;
+  color:#fff7ed;
+  padding:.06em .42em;
+  border-radius:8px;
+  font-size:.9em;
+  white-space:nowrap;
+}
+.hero-layout{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:30px;
+  align-items:center;
+}
+.badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border-radius:999px;
+  padding:8px 13px;
+  font-weight:900;
+  border:2px solid rgba(59,31,11,.08);
+}
+.badge.orange{background:#ffedd5;color:#9a3412}
+.badge.pink{background:var(--soft-pink);color:#9d174d}
+.badge.teal{background:var(--soft-teal);color:#115e59}
+.badge.purple{background:var(--soft-purple);color:#5b21b6}
+.avatar-scene{
+  min-height:310px;
+  position:relative;
+  display:grid;
+  place-items:center;
+}
+.octo-card{
+  width:min(260px,22vw);
+  height:min(260px,22vw);
+  min-width:175px;
+  min-height:175px;
+  border-radius:52px;
+  background:linear-gradient(145deg,#111827,#374151);
+  box-shadow:0 12px 0 rgba(17,24,39,.25);
+  position:relative;
+  transform:rotate(-4deg);
+}
+.octo-card:before,.octo-card:after{
+  content:"";
+  position:absolute;
+  top:16%;
+  width:27%;
+  height:27%;
+  background:#111827;
+  border-radius:18px 18px 4px 4px;
+}
+.octo-card:before{left:16%;transform:rotate(-18deg)}
+.octo-card:after{right:16%;transform:rotate(18deg)}
+.face{
+  position:absolute;
+  left:50%;
+  top:54%;
+  transform:translate(-50%,-50%);
+  width:62%;
+  height:48%;
+  background:#fff7ed;
+  border-radius:50% 50% 42% 42%;
+}
+.eye{
+  position:absolute;
+  top:42%;
+  width:10%;
+  height:18%;
+  background:#111827;
+  border-radius:999px;
+}
+.eye.left{left:30%}
+.eye.right{right:30%}
+.smile{
+  position:absolute;
+  left:50%;
+  top:65%;
+  width:32%;
+  height:16%;
+  transform:translateX(-50%);
+  border-bottom:4px solid #111827;
+  border-radius:0 0 999px 999px;
+}
+.float{
+  position:absolute;
+  display:grid;
+  place-items:center;
+  font-size:1.5rem;
+  width:56px;
+  height:56px;
+  border-radius:18px;
+  border:3px solid #fff;
+  box-shadow:0 7px 0 rgba(0,0,0,.1);
+  animation:bob 3s ease-in-out infinite;
+}
+.float.git{background:#ffedd5;left:5%;top:10%}
+.float.pr{background:var(--soft-pink);right:4%;top:16%;animation-delay:.4s}
+.float.ci{background:var(--soft-teal);left:10%;bottom:10%;animation-delay:.8s}
+.float.team{background:var(--soft-yellow);right:11%;bottom:6%;animation-delay:1.2s}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-10px) rotate(5deg)}}
+.flow{
+  display:flex;
+  align-items:stretch;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.flow-step{
+  min-width:126px;
+  flex:1 1 120px;
+  background:#fff;
+  border:2px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+  text-align:center;
+  font-weight:850;
+  box-shadow:0 5px 0 var(--line);
+}
+.arrow{
+  align-self:center;
+  font-size:1.8rem;
+  font-weight:900;
+  color:var(--accent);
+}
+.board{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+.column{
+  background:#fff;
+  border:2px solid var(--line);
+  border-radius:18px;
+  padding:12px;
+  min-height:210px;
+}
+.ticket{
+  margin-top:10px;
+  padding:10px;
+  border-radius:14px;
+  background:var(--soft-yellow);
+  border:2px solid #fde047;
+  font-weight:750;
+}
+.ticket.pink{background:var(--soft-pink);border-color:#f9a8d4}
+.ticket.teal{background:var(--soft-teal);border-color:#5eead4}
+.ticket.blue{background:var(--soft-blue);border-color:#93c5fd}
+.pipeline{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+  align-items:center;
+}
+.pipe{
+  text-align:center;
+  padding:16px 10px;
+  border-radius:20px;
+  border:2px solid var(--line);
+  background:#fff;
+  box-shadow:0 6px 0 var(--line);
+  font-weight:900;
+}
+.checklist{display:grid;gap:10px}
+.check{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  background:#fff;
+  border:2px solid var(--line);
+  border-radius:16px;
+  padding:12px;
+}
+.check span:first-child{
+  flex:0 0 auto;
+  width:28px;height:28px;
+  border-radius:10px;
+  display:grid;place-items:center;
+  color:#fff;font-weight:900;
+  background:var(--green);
+}
+.code-block{
+  background:#2a1307;
+  color:#fff7ed;
+  border-radius:18px;
+  padding:15px;
+  overflow:auto;
+  border:2px solid #7c2d12;
+  font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
+  font-size:clamp(.72rem,1.05vw,.92rem);
+  line-height:1.5;
+  max-height:310px;
+}
+.controls{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+button{
+  border:0;
+  background:var(--accent);
+  color:#fff;
+  font-weight:900;
+  border-radius:999px;
+  padding:10px 18px;
+  cursor:pointer;
+  box-shadow:0 5px 0 #fdba74;
+}
+button:hover{transform:translateY(-1px)}
+button:active{transform:translateY(3px);box-shadow:0 2px 0 #fdba74}
+button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.progress-wrap{
+  flex:1;
+  height:14px;
+  background:#fff;
+  border:2px solid var(--line);
+  border-radius:999px;
+  overflow:hidden;
+}
+.progress{
+  height:100%;
+  width:10%;
+  background:linear-gradient(90deg,var(--accent),var(--pink),var(--teal));
+  border-radius:999px;
+  transition:width .25s ease;
+}
+.slide-count{
+  min-width:84px;
+  text-align:center;
+  font-weight:900;
+  color:var(--muted);
+}
+.notes{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.hint{
+  text-align:center;
+  color:var(--muted);
+  font-size:.9rem;
+}
+@media (max-width:840px){
+  html,body{overflow:hidden}
+  .container{padding:10px;gap:8px}
+  .deck{
+    aspect-ratio:auto;
+    height:calc(100vh - 105px);
+    max-height:none;
+    border-radius:24px;
+  }
+  .slide{padding:22px;overflow:auto}
+  .slide.active{align-content:start}
+  .hero-layout,.grid.two,.grid.three{grid-template-columns:1fr}
+  .avatar-scene{min-height:210px}
+  .board,.pipeline{grid-template-columns:1fr 1fr}
+  .arrow{display:none}
+  .controls{gap:8px}
+  button{padding:9px 12px}
+  .hint{display:none}
+}
+@media (max-width:520px){
+  .board,.pipeline{grid-template-columns:1fr}
+  .slide-title{align-items:flex-start}
+  .icon-bubble{width:46px;height:46px;border-radius:15px}
+}
+@media print{
+  html,body{height:auto;overflow:visible;background:#fff}
+  .container{display:block;height:auto;width:100%;padding:0}
+  .controls,.hint{display:none}
+  .deck{height:auto;max-height:none;aspect-ratio:auto;border:0;box-shadow:none;overflow:visible}
+  .slide{
+    display:grid !important;
+    position:relative;
+    page-break-after:always;
+    break-after:page;
+    width:100%;
+    height:100vh;
+    border:3px solid var(--line);
+    border-radius:0;
+    overflow:hidden;
+  }
+  .slide:last-child{page-break-after:auto;break-after:auto}
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <main class="deck" aria-live="polite">
+      <section class="slide active" data-title="Mở đầu">
+        <div class="hero-layout">
+          <div>
+            <span class="pill">Tài liệu nhập môn</span>
+            <h1>GitHub: ngôi nhà chung của đội phát triển</h1>
+            <p class="lead">Hãy tưởng tượng nhóm bạn đang xây một ứng dụng. Mỗi người sửa một mảng, deadline chạy tới, bug thì lấp ló. GitHub chính là “trung tâm chỉ huy” để mọi thay đổi được ghi lại, kiểm tra và đưa ra sản phẩm một cách tự tin.</p>
+            <div class="badges" aria-label="Các chủ đề chính">
+              <span class="badge orange">🌿 Git & Branch</span>
+              <span class="badge pink">🤝 Pull Request</span>
+              <span class="badge teal">⚙️ CI/CD</span>
+              <span class="badge purple">🏃 Agile</span>
+            </div>
+          </div>
+          <div class="avatar-scene" aria-label="Minh họa GitHub vui nhộn">
+            <div class="float git" title="Git">🌿</div>
+            <div class="float pr" title="Pull Request">🔁</div>
+            <div class="float ci" title="CI/CD">⚙️</div>
+            <div class="float team" title="Team">👥</div>
+            <div class="octo-card" aria-hidden="true">
+              <div class="face">
+                <div class="eye left"></div>
+                <div class="eye right"></div>
+                <div class="smile"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">Mở bằng một tình huống dự án nhóm để người học thấy GitHub không chỉ là nơi lưu code.</aside>
+      </section>
+
+      <section class="slide" data-title="Git và GitHub">
+        <div class="slide-title">
+          <div class="icon-bubble">🧭</div>
+          <h2>Git là máy ảnh, GitHub là ngôi nhà chung</h2>
+        </div>
+        <p class="lead">Một buổi tối, bạn sửa xong tính năng đăng nhập. Sáng hôm sau, mọi thứ lỗi tung tóe. May mắn là Git đã “chụp ảnh” từng phiên bản code.</p>
+        <div class="grid two">
+          <article class="card orange">
+            <h3>🌿 Git</h3>
+            <p>Công cụ quản lý phiên bản: ghi lại lịch sử thay đổi, so sánh code, quay lại bản cũ và làm việc song song bằng branch.</p>
+          </article>
+          <article class="card teal">
+            <h3>🏠 GitHub</h3>
+            <p>Nền tảng cloud cho repository: lưu code, giao việc bằng Issues, review bằng Pull Request, quản lý sprint và chạy tự động hóa.</p>
+          </article>
+        </div>
+        <p class="big-line">Hiểu nhanh: Git giữ lịch sử, GitHub giúp cả đội phối hợp.</p>
+      </section>
+
+      <section class="slide" data-title="Quy trình Git">
+        <div class="slide-title">
+          <div class="icon-bubble" style="background:var(--pink);box-shadow:0 5px 0 #f9a8d4">🌱</div>
+          <h2>Một chuyến đi của dòng code</h2>
+        </div>
+        <p class="lead">Mỗi thay đổi nên đi theo một hành trình rõ ràng, giống như một bưu kiện: lấy mã, đóng gói, gửi đi, kiểm tra rồi mới nhập kho chính.</p>
+        <div class="flow" aria-label="Quy trình Git cơ bản">
+          <div class="flow-step">Clone<br><small>Lấy mã</small></div>
+          <div class="arrow">→</div>
+          <div class="flow-step">Branch<br><small>Tách nhánh</small></div>
+          <div class="arrow">→</div>
+          <div class="flow-step">Commit<br><small>Ghi dấu</small></div>
+          <div class="arrow">→</div>
+          <div class="flow-step">Push<br><small>Đẩy lên</small></div>
+          <div class="arrow">→</div>
+          <div class="flow-step">PR & Merge<br><small>Review, gộp</small></div>
+        </div>
+        <div class="grid two" style="margin-top:20px">
+          <div class="card yellow">
+            <h3>Lệnh thường gặp</h3>
+            <p><span class="kbd">git clone</span> · <span class="kbd">git checkout -b</span> · <span class="kbd">git add</span> · <span class="kbd">git commit</span> · <span class="kbd">git push</span></p>
+          </div>
+          <div class="card pink">
+            <h3>Thói quen xịn</h3>
+            <ul>
+              <li>Commit nhỏ, rõ mục đích.</li>
+              <li>Branch dễ đọc: <span class="kbd">feature/login</span>, <span class="kbd">fix/cart-bug</span>.</li>
+              <li>Không đưa token, password, secret key vào code.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Issues">
+        <div class="slide-title">
+          <div class="icon-bubble" style="background:var(--blue);box-shadow:0 5px 0 #93c5fd">📝</div>
+          <h2>Issues: biến “ý tưởng mơ hồ” thành việc làm được</h2>
+        </div>
+        <p class="lead">Trong nhóm, câu “màn hình login bị lỗi” là chưa đủ. Một Issue tốt giúp cả đội biết lỗi ở đâu, cần sửa gì và thế nào là xong.</p>
+        <div class="grid three">
+          <article class="card blue">
+            <h3>Bug</h3>
+            <p>Ghi bước tái hiện, môi trường, ảnh chụp và kết quả mong đợi.</p>
+          </article>
+          <article class="card yellow">
+            <h3>Task</h3>
+            <p>Mô tả việc cần làm, người phụ trách, deadline và tiêu chí hoàn thành.</p>
+          </article>
+          <article class="card purple">
+            <h3>Ý tưởng</h3>
+            <p>Lưu đề xuất cải tiến để thảo luận, ưu tiên và đưa vào sprint phù hợp.</p>
+          </article>
+        </div>
+        <div class="card orange" style="margin-top:18px">
+          <h3>Công thức Issue gọn</h3>
+          <p><strong>Bối cảnh</strong> → <strong>Việc cần làm</strong> → <strong>Tiêu chí hoàn thành</strong> → <strong>Tài liệu/ảnh liên quan</strong>.</p>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Pull Request">
+        <div class="slide-title">
+          <div class="icon-bubble" style="background:var(--teal);box-shadow:0 5px 0 #5eead4">🤝</div>
+          <h2>Pull Request: cánh cửa kiểm duyệt trước khi vào main</h2>
+        </div>
+        <p class="lead">Bạn không bước thẳng vào phòng điều khiển và bấm nút deploy. Bạn mở Pull Request để cả đội cùng soi đèn: logic ổn chưa, test qua chưa, có ảnh hưởng ai không?</p>
+        <div class="grid two">
+          <article class="card pink">
+            <h3>PR nên có</h3>
+            <ul>
+              <li>Mô tả thay đổi.</li>
+              <li>Link Issue liên quan.</li>
+              <li>Ảnh demo hoặc video ngắn nếu có UI.</li>
+              <li>Checklist đã test.</li>
+            </ul>
+          </article>
+          <article class="card teal">
+            <h3>Review nên nhìn</h3>
+            <ul>
+              <li>Logic nghiệp vụ.</li>
+              <li>Bảo mật và dữ liệu nhạy cảm.</li>
+              <li>Hiệu năng.</li>
+              <li>Dễ đọc, dễ bảo trì.</li>
+              <li>Test đủ tình huống.</li>
+            </ul>
+          </article>
+        </div>
+        <p class="big-line">PR không phải “bắt lỗi nhau”, mà là bảo hiểm chất lượng cho cả đội.</p>
+      </section>
+
+      <section class="slide" data-title="Luồng teamwork">
+        <div class="slide-title">
+          <div class="icon-bubble" style="background:var(--purple);box-shadow:0 5px 0 #c4b5fd">👥</div>
+          <h2>Luồng làm việc nhóm: từ task đến merge</h2>
+        </div>
+        <p class="lead">Khi quy trình rõ, nhóm không còn hỏi “ai đang làm gì?” mỗi 15 phút. Mỗi task tự kể câu chuyện của nó trên GitHub.</p>
+        <div class="grid two">
+          <div class="card orange">
+            <h3>Hành trình đề xuất</h3>
+            <ol>
+              <li>Nhận Issue và làm rõ yêu cầu.</li>
+              <li>Tạo branch riêng từ <span class="kbd">main</span>.</li>
+              <li>Code, commit nhỏ theo từng phần.</li>
+              <li>Mở Pull Request và gắn reviewer.</li>
+              <li>Sửa theo góp ý, đợi CI pass.</li>
+              <li>Merge khi đã approve và không conflict.</li>
+            </ol>
+          </div>
+          <div class="card blue">
+            <h3>Quy ước giúp đội chạy mượt</h3>
+            <ul>
+              <li><span class="kbd">feature/payment-ui</span> cho tính năng mới.</li>
+              <li><span class="kbd">fix/login-error</span> cho sửa lỗi.</li>
+              <li><span class="kbd">feat:</span>, <span class="kbd">fix:</span>, <span class="kbd">docs:</span> cho commit message.</li>
+              <li>Không push trực tiếp vào <span class="kbd">main</span>.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Agile">
+        <div class="slide-title">
+          <div class="icon-bubble" style="background:var(--green);box-shadow:0 5px 0 #86efac">🏃</div>
+          <h2>Agile trên GitHub: chạy nước rút nhưng không chạy loạn</h2>
+        </div>
+        <p class="lead">Sprint giống một chặng đua ngắn. GitHub Projects giúp đội nhìn thấy từng thẻ việc đang nằm ở đâu: còn chờ, đang làm, chờ review hay đã xong.</p>
+        <div class="board" aria-label="Bảng Agile minh họa">
+          <div class="column">
+            <h3>📝 Backlog</h3>
+            <div class="ticket">User Story: đăng nhập bằng email</div>
+            <div class="ticket pink">Bug: lỗi giỏ hàng</div>
+          </div>
+          <div class="column">
+            <h3>🎯 Todo</h3>
+            <div class="ticket blue">Thiết kế API login</div>
+          </div>
+          <div class="column">
+            <h3>🚧 In Progress</h3>
+            <div class="ticket teal">Xây màn hình thanh toán</div>
+          </div>
+          <div class="column">
+            <h3>✅ Done</h3>
+            <div class="ticket">Cấu hình lint</div>
+          </div>
+        </div>
+        <div class="grid two" style="margin-top:18px">
+          <div class="card purple"><strong>Product Backlog</strong> = Issues/User Stories</div>
+          <div class="card yellow"><strong>Sprint</strong> = Milestone hoặc Project iteration</div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="CI/CD">
+        <div class="slide-title">
+          <div class="icon-bubble" style="background:var(--teal);box-shadow:0 5px 0 #5eead4">⚙️</div>
+          <h2>CI/CD: robot kiểm tra trước khi code ra sân khấu</h2>
+        </div>
+        <p class="lead">Trước khi bản diễn ra mắt, robot hậu trường sẽ build, lint, test. Nếu có lỗi, nó giơ biển đỏ ngay trong Pull Request.</p>
+        <div class="pipeline" aria-label="Pipeline CI/CD">
+          <div class="pipe">Push code</div>
+          <div class="pipe">Install</div>
+          <div class="pipe">Lint</div>
+          <div class="pipe">Test</div>
+          <div class="pipe">Build/Deploy</div>
+        </div>
+        <div class="grid two" style="margin-top:20px">
+          <article class="card teal">
+            <h3>CI</h3>
+            <p>Tự động tích hợp: build, lint, test mỗi khi có code mới để phát hiện lỗi sớm.</p>
+          </article>
+          <article class="card orange">
+            <h3>CD</h3>
+            <p>Tự động chuẩn bị hoặc triển khai lên staging/production khi code đạt chuẩn.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Workflow mẫu">
+        <div class="slide-title">
+          <div class="icon-bubble" style="background:var(--red);box-shadow:0 5px 0 #fca5a5">🧪</div>
+          <h2>Workflow mẫu: bài kiểm tra tự động cho Pull Request</h2>
+        </div>
+        <p class="lead">Một file nhỏ trong thư mục <span class="kbd">.github/workflows</span> có thể biến GitHub thành người gác cổng chất lượng.</p>
+        <div class="code-block" aria-label="Ví dụ workflow GitHub Actions cho Node.js">name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build</div>
+        <div class="card yellow" style="margin-top:16px">
+          <strong>Ý nghĩa:</strong> chỉ nên merge khi các bước kiểm tra chạy xanh. Nếu đỏ, sửa code trước khi gộp.
+        </div>
+      </section>
+
+      <section class="slide" data-title="Tổng kết">
+        <div class="slide-title">
+          <div class="icon-bubble" style="background:var(--yellow);color:#3b1f0b;box-shadow:0 5px 0 #fde047">🚀</div>
+          <h2>Tóm tắt: làm GitHub như một đội chuyên nghiệp</h2>
+        </div>
+        <p class="lead">Khi mọi người cùng theo một nhịp, GitHub không còn là “chỗ cất code” mà trở thành dây chuyền sản xuất phần mềm.</p>
+        <div class="checklist">
+          <div class="check"><span>✓</span><div><strong>Chia việc rõ:</strong> dùng Issues, Labels, Milestones và Projects.</div></div>
+          <div class="check"><span>✓</span><div><strong>Làm việc an toàn:</strong> code trên branch riêng, không push thẳng vào <span class="kbd">main</span>.</div></div>
+          <div class="check"><span>✓</span><div><strong>Review kỹ:</strong> Pull Request có mô tả, checklist test và người duyệt.</div></div>
+          <div class="check"><span>✓</span><div><strong>Tự động hóa:</strong> GitHub Actions chạy lint, test, build và deploy.</div></div>
+          <div class="check"><span>✓</span><div><strong>Hành động ngay:</strong> tạo một repo thử nghiệm, mở PR đầu tiên và bật CI cơ bản.</div></div>
+        </div>
+        <p class="big-line">Commit nhỏ, review kỹ, deploy tự tin! 🎉</p>
+      </section>
+    </main>
+
+    <div class="controls" aria-label="Điều khiển slide">
+      <button id="prevBtn" type="button" aria-label="Slide trước">← Trước</button>
+      <div class="progress-wrap" aria-hidden="true"><div class="progress" id="progress"></div></div>
+      <div class="slide-count" id="slideCount">1 / 10</div>
+      <button id="nextBtn" type="button" aria-label="Slide tiếp theo">Tiếp →</button>
+    </div>
+    <div class="hint">Dùng phím ← → để chuyển slide, Home về đầu, End đến cuối.</div>
+  </div>
+
+  <script>
+    (function(){
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const slideCount = document.getElementById('slideCount');
+      const progress = document.getElementById('progress');
+      let index = 0;
+
+      function showSlide(newIndex){
+        index = Math.max(0, Math.min(slides.length - 1, newIndex));
+        slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+        slideCount.textContent = (index + 1) + ' / ' + slides.length;
+        progress.style.width = ((index + 1) / slides.length * 100) + '%';
+        prevBtn.disabled = index === 0;
+        nextBtn.disabled = index === slides.length - 1;
+        document.title = 'Slide ' + (index + 1) + ': ' + (slides[index].dataset.title || 'GitHub');
+      }
+
+      prevBtn.addEventListener('click', () => showSlide(index - 1));
+      nextBtn.addEventListener('click', () => showSlide(index + 1));
+
+      document.addEventListener('keydown', function(event){
+        if(event.key === 'ArrowLeft') showSlide(index - 1);
+        if(event.key === 'ArrowRight') showSlide(index + 1);
+        if(event.key === 'Home') showSlide(0);
+        if(event.key === 'End') showSlide(slides.length - 1);
+      });
+
+      let touchStartX = null;
+      document.querySelector('.deck').addEventListener('touchstart', function(event){
+        touchStartX = event.changedTouches[0].screenX;
+      }, {passive:true});
+      document.querySelector('.deck').addEventListener('touchend', function(event){
+        if(touchStartX === null) return;
+        const delta = event.changedTouches[0].screenX - touchStartX;
+        if(Math.abs(delta) > 50){
+          showSlide(index + (delta < 0 ? 1 : -1));
+        }
+        touchStartX = null;
+      }, {passive:true});
+
+      showSlide(0);
+    })();
+  </script>
+</body>
+</html>

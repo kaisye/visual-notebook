@@ -3,7 +3,7 @@
 import { useState } from "react";
 import {
   Search, LayoutGrid, List, RefreshCw, Settings, Sparkles,
-  Moon, Sun, BookMarked, FolderOpen, ChevronDown, FolderSync, FolderPlus, Unplug, Upload,
+  Moon, Sun, BookMarked, FolderOpen, ChevronDown, FolderSync, FolderPlus, Unplug,
 } from "lucide-react";
 import { useWorkspace } from "@/lib/store";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,6 @@ export function TopBar({ onOpenSettings }: { onOpenSettings: () => void }) {
   const connect = useWorkspace((s) => s.connect);
   const addRoot = useWorkspace((s) => s.addRoot);
   const disconnect = useWorkspace((s) => s.disconnect);
-  const installDemoFiles = useWorkspace((s) => s.installDemoFiles);
   const agentOpen = useWorkspace((s) => s.agentOpen);
   const setAgentOpen = useWorkspace((s) => s.setAgentOpen);
   const dialog = useDialog();
@@ -29,7 +28,6 @@ export function TopBar({ onOpenSettings }: { onOpenSettings: () => void }) {
     () => typeof document !== "undefined" && document.documentElement.classList.contains("dark"),
   );
   const [busy, setBusy] = useState(false);
-  const [demoBusy, setDemoBusy] = useState(false);
 
   function toggleDark() {
     const next = !document.documentElement.classList.contains("dark");
@@ -42,15 +40,6 @@ export function TopBar({ onOpenSettings }: { onOpenSettings: () => void }) {
     setBusy(true);
     await refresh();
     setBusy(false);
-  }
-
-  async function doInstallDemos() {
-    setDemoBusy(true);
-    try {
-      await installDemoFiles();
-    } finally {
-      setDemoBusy(false);
-    }
   }
 
   async function changeFolder(close: () => void) {
@@ -146,15 +135,6 @@ export function TopBar({ onOpenSettings }: { onOpenSettings: () => void }) {
         </Button>
         <Button size="icon" variant="ghost" onClick={onOpenSettings} title="Cài đặt">
           <Settings className="h-4 w-4" />
-        </Button>
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={doInstallDemos}
-          disabled={demoBusy}
-          title="Tạo vài file HTML demo trong thư mục docs"
-        >
-          <Upload className="h-4 w-4" /> Demo
         </Button>
         <Button
           variant={agentOpen ? "primary" : "secondary"}

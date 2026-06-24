@@ -2,9 +2,11 @@
 
 ![Visual Notebook overview](images/visual-notebook-overview.png)
 
-Demo source files live in [`docs/`](docs/). Public preview URLs:
+Demo source files live in [`demo/`](demo/). Public preview URLs:
 `/demos/`, `/demos/fastapi-production.html`,
 `/demos/calculus-derivative.html`, `/demos/git-workflow.html`.
+When a user opens a local workspace folder, the app automatically creates a `demo/`
+subfolder with sample HTML files if it does not already exist.
 
 Trạm quản lý file **HTML/Markdown/PDF** học tập với **trợ lý AI** — tổ chức trực quan kiểu Notion,
 đọc/ghi trực tiếp file trên ổ đĩa của bạn ngay trong trình duyệt (không upload lên cloud).
