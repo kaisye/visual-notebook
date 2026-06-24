@@ -1,5 +1,7 @@
 # Visual Notebook
 
+![Visual Notebook overview](images/visual-notebook-overview.png)
+
 Trạm quản lý file **HTML/Markdown/PDF** học tập với **trợ lý AI** — tổ chức trực quan kiểu Notion,
 đọc/ghi trực tiếp file trên ổ đĩa của bạn ngay trong trình duyệt (không upload lên cloud).
 
