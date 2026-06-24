@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Visual Notebook
 
-## Getting Started
+Trạm quản lý file **HTML/Markdown/PDF** học tập với **trợ lý AI** — tổ chức trực quan kiểu Notion,
+đọc/ghi trực tiếp file trên ổ đĩa của bạn ngay trong trình duyệt (không upload lên cloud).
 
-First, run the development server:
+## Tính năng
+
+- 📂 **Đồng bộ ổ đĩa thật** qua File System Access API — chọn 1 thư mục (vd `d:\AIO2026`),
+  app đọc/ghi trực tiếp các file `.html`/`.md`/`.pdf`. Dữ liệu không rời máy bạn.
+- 🗂️ **Quản lý trực quan**: cây thư mục, bộ sưu tập (thư mục ảo), nhãn (tag), yêu thích,
+  tìm kiếm. Metadata lưu trong `.visualnotebook/manifest.json` ngay trong thư mục.
+- 👁️ **Xem & sửa**: preview HTML/Markdown trong iframe, trình xem PDF, trình soạn mã nguồn (CodeMirror).
+- 🤖 **Trợ lý AI** (đa nhà cung cấp: Claude / OpenAI / Gemini):
+  - Tạo file HTML mới từ mô tả.
+  - Sửa file HTML đang mở.
+  - Chuyển **PDF → HTML** sạch/đẹp (trích nội dung + ảnh trang rồi AI dựng lại).
+- 🎨 **Bộ theme** chọn khi tạo: Minimal, Modern, Tech (dark), Academic, Playful — kèm
+  **năng lực**: Toán/định lý (KaTeX), Biểu đồ (Chart.js), Sơ đồ (Mermaid),
+  Mô phỏng vật lý (p5.js/Matter.js), Code highlight.
+- 🔒 Đăng nhập đơn giản (mật khẩu) để bảo vệ khi host public.
+
+> ⚠️ Cần **Google Chrome** hoặc **Microsoft Edge** (File System Access API). Firefox/Safari chưa hỗ trợ.
+
+## Chạy local
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Mở http://localhost:3333 bằng Chrome/Edge. Mật khẩu mặc định khi dev: **`visualnotebook`**.
+Vào ⚙️ Cài đặt → nhập API key của ít nhất một nhà cung cấp để dùng trợ lý AI.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy lên Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Push code lên GitHub và import vào Vercel (hoặc chạy `vercel`).
+2. Đặt **Environment Variables** (xem `.env.example`):
+   - `AUTH_SECRET` — chuỗi bí mật ngẫu nhiên (bắt buộc).
+   - `APP_PASSWORD` — mật khẩu đăng nhập (bắt buộc).
+   - (tuỳ chọn) `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` / `GOOGLE_GENERATIVE_AI_API_KEY`
+     nếu muốn dùng key dùng chung phía máy chủ thay vì nhập trong app.
+3. Deploy. Mở domain Vercel bằng Chrome/Edge và đăng nhập.
 
-## Learn More
+## Kiến trúc
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Next.js 16 (App Router)** + React 19 + Tailwind v4, host trên Vercel.
+- **Local-first, không cần database**: file trên ổ đĩa + metadata sidecar JSON.
+- **Auth** bằng cookie ký HS256 (`jose`) + `proxy.ts` (Next 16) — không cần DB.
+- **AI** qua Vercel AI SDK; các route serverless (`/api/ai/*`) proxy tới nhà cung cấp,
+  streaming kết quả để tránh timeout.
