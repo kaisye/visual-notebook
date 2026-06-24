@@ -3,7 +3,7 @@
 import { useState } from "react";
 import {
   Search, LayoutGrid, List, RefreshCw, Settings, Sparkles,
-  Moon, Sun, LogOut, BookMarked, FolderOpen, ChevronDown, FolderSync, FolderPlus, Unplug,
+  Moon, Sun, BookMarked, FolderOpen, ChevronDown, FolderSync, FolderPlus, Unplug,
 } from "lucide-react";
 import { useWorkspace } from "@/lib/store";
 import { Button } from "@/components/ui/button";
@@ -40,11 +40,6 @@ export function TopBar({ onOpenSettings }: { onOpenSettings: () => void }) {
     setBusy(true);
     await refresh();
     setBusy(false);
-  }
-
-  async function logout() {
-    await fetch("/api/logout", { method: "POST" });
-    location.href = "/login";
   }
 
   async function changeFolder(close: () => void) {
@@ -140,9 +135,6 @@ export function TopBar({ onOpenSettings }: { onOpenSettings: () => void }) {
         </Button>
         <Button size="icon" variant="ghost" onClick={onOpenSettings} title="Cài đặt">
           <Settings className="h-4 w-4" />
-        </Button>
-        <Button size="icon" variant="ghost" onClick={logout} title="Đăng xuất">
-          <LogOut className="h-4 w-4" />
         </Button>
         <Button
           variant={agentOpen ? "primary" : "secondary"}

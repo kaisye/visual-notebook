@@ -22,7 +22,6 @@ Trạm quản lý file **HTML/Markdown/PDF** học tập với **trợ lý AI** 
 - 🎨 **Bộ theme** chọn khi tạo: Minimal, Modern, Tech (dark), Academic, Playful — kèm
   **năng lực**: Toán/định lý (KaTeX), Biểu đồ (Chart.js), Sơ đồ (Mermaid),
   Mô phỏng vật lý (p5.js/Matter.js), Code highlight.
-- 🔒 Đăng nhập đơn giản (mật khẩu) để bảo vệ khi host public.
 
 > ⚠️ Cần **Google Chrome** hoặc **Microsoft Edge** (File System Access API). Firefox/Safari chưa hỗ trợ.
 
@@ -33,26 +32,20 @@ npm install
 npm run dev
 ```
 
-Mở http://localhost:3333 bằng Chrome/Edge. Mật khẩu mặc định khi dev: **`visualnotebook`**.
+Mở http://localhost:3333 bằng Chrome/Edge.
 Vào ⚙️ Cài đặt → nhập API key của ít nhất một nhà cung cấp để dùng trợ lý AI.
 
 ## Deploy lên Vercel
 
 1. Push code lên GitHub và import vào Vercel (hoặc chạy `vercel`).
-2. Đặt **Environment Variables** (xem `.env.example`):
-   - `AUTH_SECRET` — chuỗi bí mật ngẫu nhiên (bắt buộc).
-   - `APP_PASSWORD` — mật khẩu đăng nhập (bắt buộc).
+2. Đặt **Environment Variables** nếu muốn dùng API key chung phía server:
    - (tuỳ chọn) `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` / `GOOGLE_GENERATIVE_AI_API_KEY`
      nếu muốn dùng key dùng chung phía máy chủ thay vì nhập trong app.
-   - (tuỳ chọn) `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` để bật đăng nhập Google.
-     Authorized redirect URI: `https://visual-notebook.vercel.app/api/auth/google/callback`.
-   - (tuỳ chọn) `GOOGLE_ALLOWED_EMAILS` / `GOOGLE_ALLOWED_DOMAINS` nếu muốn giới hạn tài khoản Google.
-3. Deploy. Mở domain Vercel bằng Chrome/Edge và đăng nhập.
+3. Deploy. Mở domain Vercel bằng Chrome/Edge.
 
 ## Kiến trúc
 
 - **Next.js 16 (App Router)** + React 19 + Tailwind v4, host trên Vercel.
 - **Local-first, không cần database**: file trên ổ đĩa + metadata sidecar JSON.
-- **Auth** bằng cookie ký HS256 (`jose`) + `proxy.ts` (Next 16) — không cần DB.
 - **AI** qua Vercel AI SDK; các route serverless (`/api/ai/*`) proxy tới nhà cung cấp,
   streaming kết quả để tránh timeout.
