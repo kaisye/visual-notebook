@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FastAPI Nâng Cao — Sổ Tay Kỹ Sư</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --bg-panel:#f7f8fa;
+    --bg-card:#f3f4f6;
+    --border:#e2e5ea;
+    --text:#1f2733;
+    --text-dim:#5b6573;
+    --text-faint:#8b96a5;
+    --accent:#0d9488;
+    --accent-soft:#e6f7f5;
+    --accent2:#c2540a;
+    --accent2-soft:#fdf0e4;
+    --danger:#c0392b;
+    --danger-soft:#fbeaea;
+    --blue:#1d7fae;
+    --mono:'JetBrains Mono','Fira Code',ui-monospace,Consolas,monospace;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* ---------- layout ---------- */
+  .shell{display:flex; min-height:100vh;}
+  nav.toc{
+    width:268px; flex:0 0 268px;
+    background:var(--bg-panel);
+    border-right:1px solid var(--border);
+    position:sticky; top:0; height:100vh;
+    overflow-y:auto;
+    padding:28px 0 60px;
+  }
+  nav.toc::-webkit-scrollbar{width:6px;}
+  nav.toc::-webkit-scrollbar-thumb{background:var(--border); border-radius:3px;}
+  .toc-brand{
+    padding:0 24px 20px;
+    border-bottom:1px solid var(--border);
+    margin-bottom:18px;
+  }
+  .toc-brand .mark{
+    font-family:var(--mono); font-size:11px; letter-spacing:.18em;
+    color:var(--accent); text-transform:uppercase;
+  }
+  .toc-brand h1{
+    font-size:19px; margin:8px 0 4px; line-height:1.3; color:#0f172a;
+    font-weight:700;
+  }
+  .toc-brand p{font-size:12.5px; color:var(--text-dim); margin:0;}
+  .toc-list{padding:0 14px;}
+  .toc-list a{
+    display:flex; gap:10px; align-items:baseline;
+    padding:7px 10px; border-radius:6px;
+    color:var(--text-dim); text-decoration:none; font-size:13.5px;
+    transition:background .12s, color .12s;
+  }
+  .toc-list a:hover{background:var(--bg-card); color:var(--text);}
+  .toc-list a.active{background:var(--accent-soft); color:var(--accent);}
+  .toc-list .num{font-family:var(--mono); font-size:11px; color:var(--text-faint); flex:0 0 18px;}
+  .toc-list a.active .num{color:var(--accent);}
+
+  main{flex:1; min-width:0;}
+  .wrap{max-width:840px; margin:0 auto; padding:64px 48px 120px;}
+
+  /* ---------- cover ---------- */
+  .cover{
+    padding:80px 0 56px;
+    border-bottom:1px solid var(--border);
+    margin-bottom:56px;
+  }
+  .cover .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:.2em;
+    color:var(--accent); text-transform:uppercase; margin-bottom:18px;
+  }
+  .cover h1{
+    font-size:52px; line-height:1.08; margin:0 0 18px; color:#0f172a;
+    font-weight:800; letter-spacing:-0.02em;
+  }
+  .cover h1 span{color:var(--accent);}
+  .cover .sub{font-size:18px; color:var(--text-dim); max-width:560px; margin:0 0 28px;}
+  .cover .meta-row{display:flex; gap:28px; flex-wrap:wrap; margin-top:32px;}
+  .cover .meta-item{font-size:13px; color:var(--text-faint);}
+  .cover .meta-item b{display:block; color:var(--text); font-size:14px; font-weight:600; margin-bottom:2px;}
+
+  /* ---------- chapter sections ---------- */
+  .chapter{padding-top:18px; margin-bottom:84px; scroll-margin-top:24px;}
+  .chapter-head{display:flex; align-items:baseline; gap:16px; margin-bottom:28px;}
+  .chapter-head .chnum{
+    font-family:var(--mono); font-size:14px; color:var(--accent);
+    border:1px solid var(--accent-soft); background:var(--accent-soft);
+    padding:4px 10px; border-radius:5px; flex:0 0 auto;
+  }
+  .chapter h2{font-size:30px; margin:0; color:#0f172a; font-weight:750; letter-spacing:-0.01em;}
+  .chapter .dek{color:var(--text-dim); font-size:15.5px; margin:-14px 0 30px; max-width:620px;}
+
+  h3{font-size:21px; color:#0f172a; margin:38px 0 14px; font-weight:700;}
+  h4{font-size:16.5px; color:var(--accent); margin:28px 0 10px; font-weight:650;
+     font-family:var(--mono); letter-spacing:-0.01em;}
+  p{margin:0 0 16px; color:var(--text);}
+  ul,ol{margin:0 0 16px; padding-left:22px;}
+  li{margin-bottom:7px; color:var(--text);}
+  strong{color:#0f172a; font-weight:650;}
+  code{
+    font-family:var(--mono); font-size:13.5px; background:var(--bg-card);
+    color:var(--accent); padding:2px 6px; border-radius:4px;
+    border:1px solid var(--border);
+  }
+
+  /* ---------- code blocks ---------- */
+  .code-block{
+    background:#0f172a; border:1px solid var(--border); border-radius:10px;
+    margin:18px 0 24px; overflow:hidden;
+  }
+  .code-block .code-label{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:9px 16px; background:#1e293b; border-bottom:1px solid #2c3a4f;
+    font-family:var(--mono); font-size:11.5px; color:#94a3b8; letter-spacing:.04em;
+  }
+  .code-block .code-label .dots{display:flex; gap:5px;}
+  .code-block .code-label .dots span{width:8px; height:8px; border-radius:50%; background:#3a4a61; display:inline-block;}
+  .code-block pre{
+    margin:0; padding:18px; overflow-x:auto;
+    font-family:var(--mono); font-size:13px; line-height:1.7; color:#dbeafe;
+  }
+  .code-block code{background:none; border:none; padding:0; color:inherit; font-size:inherit;}
+  .tok-kw{color:#f9a8c9;}
+  .tok-str{color:#86efac;}
+  .tok-com{color:#7c8aa3; font-style:italic;}
+  .tok-fn{color:#93c5fd;}
+  .tok-cls{color:#fcd34d;}
+  .tok-dec{color:#5eead4;}
+
+  /* ---------- callouts ---------- */
+  .callout{
+    border-radius:10px; padding:18px 20px; margin:22px 0;
+    border:1px solid var(--border); border-left:3px solid var(--accent);
+    background:var(--bg-card);
+  }
+  .callout .ctitle{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:8px; font-weight:700;
+  }
+  .callout p:last-child{margin-bottom:0;}
+  .callout.warn{border-left-color:var(--accent2); background:linear-gradient(180deg,var(--accent2-soft)10%,var(--bg-card));}
+  .callout.warn .ctitle{color:var(--accent2);}
+  .callout.danger{border-left-color:var(--danger); background:linear-gradient(180deg,var(--danger-soft)10%,var(--bg-card));}
+  .callout.danger .ctitle{color:var(--danger);}
+
+  /* ---------- diagram card ---------- */
+  .diagram-card{
+    background:var(--bg-panel); border:1px solid var(--border); border-radius:12px;
+    padding:24px; margin:26px 0;
+  }
+  .diagram-card .dcap{
+    font-family:var(--mono); font-size:11.5px; color:var(--text-faint);
+    margin-top:14px; text-align:center; letter-spacing:.02em;
+  }
+  .diagram-card svg{display:block; margin:0 auto; max-width:100%; height:auto;}
+
+  /* ---------- tables ---------- */
+  table{width:100%; border-collapse:collapse; margin:20px 0 26px; font-size:13.8px;}
+  th{
+    text-align:left; padding:10px 14px; background:var(--bg-card);
+    color:var(--accent); font-family:var(--mono); font-size:11.5px;
+    letter-spacing:.05em; text-transform:uppercase; border-bottom:1px solid var(--border);
+  }
+  td{padding:10px 14px; border-bottom:1px solid var(--border); color:var(--text-dim); vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  td code{font-size:12.5px;}
+
+  /* ---------- badges / pills row ---------- */
+  .pill-row{display:flex; gap:8px; flex-wrap:wrap; margin:18px 0 26px;}
+  .pill{
+    font-family:var(--mono); font-size:12px; padding:5px 12px; border-radius:20px;
+    background:var(--bg-card); border:1px solid var(--border); color:var(--text-dim);
+  }
+
+  /* ---------- checklist ---------- */
+  .checklist{list-style:none; padding:0; margin:18px 0 26px;}
+  .checklist li{
+    padding:9px 14px 9px 38px; position:relative; background:var(--bg-card);
+    border:1px solid var(--border); border-radius:8px; margin-bottom:7px;
+    font-size:14px; color:var(--text);
+  }
+  .checklist li::before{
+    content:"✓"; position:absolute; left:13px; top:8px; color:var(--accent);
+    font-weight:700; font-family:var(--mono);
+  }
+
+  /* ---------- end of chapter divider ---------- */
+  .chapter-end{
+    display:flex; align-items:center; gap:14px; margin:48px 0 0; color:var(--text-faint);
+  }
+  .chapter-end::before, .chapter-end::after{content:""; flex:1; height:1px; background:var(--border);}
+  .chapter-end span{font-family:var(--mono); font-size:11px; letter-spacing:.15em;}
+
+  /* footer */
+  footer{
+    border-top:1px solid var(--border); padding:40px 0; text-align:center;
+    color:var(--text-faint); font-size:13px;
+  }
+
+  @media (max-width: 900px){
+    nav.toc{display:none;}
+    .wrap{padding:40px 22px 80px;}
+    .cover h1{font-size:36px;}
+  }
+
+  /* ===================================================== */
+  /* IN ẤN / XUẤT PDF                                        */
+  /* ===================================================== */
+  @media print{
+    *{
+      -webkit-print-color-adjust:exact !important;
+      print-color-adjust:exact !important;
+      color-adjust:exact !important;
+    }
+    body{font-size:12.5px;}
+    nav.toc{display:none !important;}
+    .shell{display:block;}
+    main{width:100%;}
+    .wrap{max-width:100%; padding:0 6mm; margin:0;}
+
+    .cover{padding:10mm 0 14mm; page-break-after:avoid;}
+    .cover h1{font-size:30px;}
+    .cover .sub{font-size:13px;}
+
+    .chapter{
+      margin-bottom:14mm;
+      page-break-before:always;
+      break-before:page;
+    }
+    .chapter:first-of-type{page-break-before:avoid; break-before:avoid;}
+
+    h2,h3,h4{page-break-after:avoid; break-after:avoid;}
+    .chapter-head{page-break-after:avoid; break-after:avoid;}
+
+    .code-block, .diagram-card, .callout, table, .checklist{
+      page-break-inside:avoid;
+      break-inside:avoid;
+    }
+    .code-block pre{font-size:10.5px; line-height:1.5;}
+    table{font-size:11px;}
+
+    a{color:inherit; text-decoration:none;}
+    .chapter-end{display:none;}
+    footer{border-top:1px solid var(--border); margin-top:10mm;}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ================= TOC SIDEBAR ================= -->
+<nav class="toc" id="toc">
+  <div class="toc-brand">
+    <div class="mark">Sổ tay kỹ sư · 2026</div>
+    <h1>FastAPI Nâng Cao</h1>
+    <p>Async · Database · Security · RAG</p>
+  </div>
+  <div class="toc-list">
+    <a href="#c0"><span class="num">·</span> Mở đầu</a>
+    <a href="#c1"><span class="num">01</span> Mô hình Async thực chiến</a>
+    <a href="#c2"><span class="num">02</span> Pydantic làm hàng rào dữ liệu</a>
+    <a href="#c3"><span class="num">03</span> Database & Connection Pool</a>
+    <a href="#c4"><span class="num">04</span> Bảo mật: Auth & OWASP</a>
+    <a href="#c5"><span class="num">05</span> Serving LLM & RAG</a>
+    <a href="#c6"><span class="num">06</span> Production Checklist</a>
+  </div>
+</nav>
+
+<!-- ================= MAIN CONTENT ================= -->
+<main>
+<div class="wrap">
+
+  <!-- ===== COVER ===== -->
+  <section class="cover" id="c0">
+    <div class="eyebrow">Tài liệu tự biên soạn · Dành cho người đã biết FastAPI cơ bản</div>
+    <h1>FastAPI <span>Nâng Cao</span><br>cho hệ thống thực chiến</h1>
+    <p class="sub">
+      Một sổ tay súc tích về bốn trụ cột khiến một API FastAPI sống sót được khi có traffic thật:
+      lập trình bất đồng bộ đúng cách, lớp dữ liệu chịu tải, hàng rào bảo mật, và phục vụ
+      mô hình ngôn ngữ lớn (LLM/RAG) một cách an toàn.
+    </p>
+    <div class="meta-row">
+      <div class="meta-item"><b>4 chủ đề lõi</b>async · DB · security · RAG</div>
+      <div class="meta-item"><b>~18 trang in</b>đọc trong một buổi</div>
+      <div class="meta-item"><b>Code minh hoạ</b>tự soạn, chạy được</div>
+      <div class="meta-item"><b>6 sơ đồ</b>vẽ tay bằng SVG</div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- CHƯƠNG 1 — ASYNC -->
+  <!-- ============================================================ -->
+  <section class="chapter" id="c1">
+    <div class="chapter-head">
+      <span class="chnum">01</span>
+      <h2>Mô hình Async thực chiến</h2>
+    </div>
+    <p class="dek">FastAPI cho bạn hai cách viết handler — <code>def</code> và <code>async def</code> — và chọn sai gần như luôn là nguyên nhân số một khiến API "đột nhiên" chậm hẳn khi có tải thật.</p>
+
+    <h3>Vòng lặp sự kiện: chỉ có một luồng duy nhất</h3>
+    <p>
+      Khi bạn khai báo <code>async def</code>, FastAPI chạy hàm đó trực tiếp trên <strong>event loop</strong> —
+      một vòng lặp duy nhất xử lý hàng nghìn request cùng lúc bằng cách xen kẽ giữa các tác vụ đang
+      <em>chờ I/O</em> (đợi database, đợi một API bên ngoài trả lời...). Cơ chế này chỉ hoạt động nếu mọi
+      tác vụ trong hàm đều biết "nhường lượt" bằng từ khoá <code>await</code>.
+    </p>
+    <p>
+      Vấn đề nảy sinh khi bạn gọi một hàm <strong>chặn (blocking)</strong> — ví dụ thư viện <code>requests</code>,
+      hoặc một vòng lặp tính toán nặng — bên trong một <code>async def</code>. Hàm đó không nhường lượt được,
+      nên toàn bộ event loop bị đóng băng trong lúc nó chạy. Hậu quả: <strong>mọi request khác</strong>,
+      kể cả endpoint <code>/health</code> chẳng liên quan gì, cũng phải xếp hàng chờ.
+    </p>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/>
+          </marker>
+        </defs>
+        <!-- lane labels -->
+        <text x="20" y="34" font-family="JetBrains Mono, monospace" font-size="11" fill="#475569">ĐÚNG — async + await</text>
+        <text x="20" y="178" font-family="JetBrains Mono, monospace" font-size="11" fill="#c2540a">SAI — async def gọi hàm chặn</text>
+
+        <!-- correct lane -->
+        <rect x="20" y="46" width="720" height="78" rx="8" fill="#f1f5f9" stroke="#cbd5e1"/>
+        <line x1="40" y1="85" x2="720" y2="85" stroke="#cbd5e1" stroke-width="1"/>
+        <!-- three requests interleaved -->
+        <rect x="50" y="56" width="120" height="22" rx="4" fill="#ccfbf1" stroke="#0d9488"/>
+        <text x="60" y="71" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#0d9488">req A: await DB</text>
+        <rect x="190" y="56" width="120" height="22" rx="4" fill="#ccfbf1" stroke="#0d9488"/>
+        <text x="200" y="71" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#0d9488">req B: await DB</text>
+        <rect x="330" y="56" width="120" height="22" rx="4" fill="#ccfbf1" stroke="#0d9488"/>
+        <text x="340" y="71" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#0d9488">req C: await DB</text>
+        <rect x="50" y="94" width="400" height="20" rx="4" fill="#f8fafc" stroke="#0d9488" stroke-dasharray="3,3"/>
+        <text x="60" y="108" font-family="JetBrains Mono, monospace" font-size="10" fill="#64748b">loop phục vụ cả 3 request gần như song song</text>
+
+        <!-- broken lane -->
+        <rect x="20" y="190" width="720" height="92" rx="8" fill="#f1f5f9" stroke="#cbd5e1"/>
+        <rect x="50" y="202" width="660" height="24" rx="4" fill="#ffedd5" stroke="#c2540a"/>
+        <text x="60" y="218" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#c2540a">req A: gọi requests.get() (chặn 800ms) — loop ĐÓNG BĂNG</text>
+        <rect x="50" y="234" width="660" height="20" rx="4" fill="#eef1f5" stroke="#c0392b" stroke-dasharray="3,3"/>
+        <text x="60" y="248" font-family="JetBrains Mono, monospace" font-size="10" fill="#c0392b">req B, C, /health... tất cả xếp hàng phía sau, dù không liên quan</text>
+        <rect x="50" y="258" width="660" height="16" rx="4" fill="#eef1f5"/>
+        <text x="60" y="270" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#64748b">→ p99 latency tăng vọt, healthcheck timeout, pod bị restart oan</text>
+      </svg>
+      <div class="dcap">Hình 1 — Một lệnh gọi chặn bên trong async def làm nghẽn toàn bộ event loop, không chỉ request đang chạy.</div>
+    </div>
+
+    <h4>Quy tắc chọn def hay async def</h4>
+    <table>
+      <tr><th>Tình huống</th><th>Dùng</th><th>Vì sao</th></tr>
+      <tr>
+        <td>Gọi DB/API bằng thư viện hỗ trợ async (<code>asyncpg</code>, <code>httpx.AsyncClient</code>)</td>
+        <td><code>async def</code> + <code>await</code></td>
+        <td>Nhường event loop trong lúc chờ, không tốn thread</td>
+      </tr>
+      <tr>
+        <td>Gọi thư viện chỉ hỗ trợ đồng bộ (<code>requests</code>, driver DB cũ)</td>
+        <td><code>def</code> thường</td>
+        <td>FastAPI tự đưa vào threadpool, không chặn loop chính</td>
+      </tr>
+      <tr>
+        <td>Tính toán CPU nặng (resize ảnh, parse PDF, suy luận mô hình trên CPU)</td>
+        <td><code>def</code> hoặc đẩy ra worker queue</td>
+        <td>CPU nặng làm nghẽn cả threadpool lẫn event loop nếu để trong async def</td>
+      </tr>
+    </table>
+
+    <div class="code-block">
+      <div class="code-label"><span>main.py — minh hoạ đúng/sai</span><div class="dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="tok-kw">import</span> httpx
+<span class="tok-kw">import</span> requests
+<span class="tok-kw">from</span> fastapi <span class="tok-kw">import</span> FastAPI
+
+app = FastAPI()
+
+<span class="tok-com"># ❌ SAI: async def nhưng gọi thư viện chặn bên trong</span>
+<span class="tok-dec">@app.get</span>(<span class="tok-str">"/gia-vang-sai"</span>)
+<span class="tok-kw">async def</span> <span class="tok-fn">gia_vang_sai</span>():
+    r = requests.get(<span class="tok-str">"https://api.gia-vang.example/now"</span>)  <span class="tok-com"># chặn cả loop!</span>
+    <span class="tok-kw">return</span> r.json()
+
+<span class="tok-com"># ✅ ĐÚNG: dùng client bất đồng bộ, await đúng chỗ</span>
+<span class="tok-dec">@app.get</span>(<span class="tok-str">"/gia-vang-dung"</span>)
+<span class="tok-kw">async def</span> <span class="tok-fn">gia_vang_dung</span>():
+    <span class="tok-kw">async with</span> httpx.AsyncClient(timeout=<span class="tok-dec">3.0</span>) <span class="tok-kw">as</span> client:
+        r = <span class="tok-kw">await</span> client.get(<span class="tok-str">"https://api.gia-vang.example/now"</span>)
+    <span class="tok-kw">return</span> r.json()
+
+<span class="tok-com"># ✅ CŨNG ĐÚNG: thư viện chặn nhưng dùng def → FastAPI tự đưa vào threadpool</span>
+<span class="tok-dec">@app.get</span>(<span class="tok-str">"/gia-vang-threadpool"</span>)
+<span class="tok-kw">def</span> <span class="tok-fn">gia_vang_threadpool</span>():
+    r = requests.get(<span class="tok-str">"https://api.gia-vang.example/now"</span>)
+    <span class="tok-kw">return</span> r.json()</code></pre>
+    </div>
+
+    <div class="callout warn">
+      <div class="ctitle">Cách phát hiện sớm</div>
+      <p>
+        Thêm một coroutine "canary" chạy nền: ngủ 100ms rồi đo thời gian thực tế thức dậy. Nếu độ trễ
+        thực tế lệch xa hơn nhiều so với 100ms, event loop đang bị một tác vụ nào đó chiếm dụng.
+        Đưa số liệu này vào dashboard như một chỉ số riêng — đừng chỉ nhìn CPU, vì loop có thể nghẽn
+        ngay cả khi CPU rảnh (đang chờ một I/O chặn).
+      </p>
+    </div>
+
+    <h3>httpx.AsyncClient: dùng chung, không tạo mới mỗi request</h3>
+    <p>
+      Một lỗi phổ biến khác: tạo <code>httpx.AsyncClient()</code> mới bên trong mỗi handler. Mỗi client mới
+      phải bắt tay TCP + TLS lại từ đầu, tốn 1-3 round-trip mạng cho mỗi request thay vì tái sử dụng
+      kết nối đã mở (keep-alive). Giải pháp là tạo client một lần duy nhất trong <code>lifespan</code>,
+      lưu vào <code>app.state</code>, rồi tái sử dụng cho mọi request.
+    </p>
+
+    <div class="code-block">
+      <div class="code-label"><span>main.py — client dùng chung qua lifespan</span><div class="dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="tok-kw">from</span> contextlib <span class="tok-kw">import</span> asynccontextmanager
+<span class="tok-kw">import</span> httpx
+<span class="tok-kw">from</span> fastapi <span class="tok-kw">import</span> FastAPI
+
+<span class="tok-dec">@asynccontextmanager</span>
+<span class="tok-kw">async def</span> <span class="tok-fn">lifespan</span>(app: FastAPI):
+    <span class="tok-com"># Khởi tạo MỘT LẦN khi service start</span>
+    app.state.http = httpx.AsyncClient(
+        timeout=httpx.Timeout(connect=<span class="tok-dec">2.0</span>, read=<span class="tok-dec">5.0</span>, write=<span class="tok-dec">5.0</span>, pool=<span class="tok-dec">2.0</span>),
+        limits=httpx.Limits(max_connections=<span class="tok-dec">100</span>, max_keepalive_connections=<span class="tok-dec">20</span>),
+    )
+    <span class="tok-kw">yield</span>
+    <span class="tok-com"># Đóng gọn gàng khi service shutdown</span>
+    <span class="tok-kw">await</span> app.state.http.aclose()
+
+app = FastAPI(lifespan=lifespan)</code></pre>
+    </div>
+
+    <h3>Tác vụ nền: BackgroundTasks vs hàng đợi thật (Celery/RQ)</h3>
+    <p>
+      <code>BackgroundTasks</code> của FastAPI chạy <em>sau khi</em> response đã gửi đi, nhưng vẫn trong cùng
+      process. Nó phù hợp cho việc "được mất cũng không sao" — gửi log audit, làm ấm cache. Nhưng nếu
+      pod bị restart giữa chừng (deploy mới, OOM), tác vụ đó <strong>biến mất không dấu vết</strong> —
+      không retry, không log lỗi.
+    </p>
+    <p>
+      Với việc gì <em>bắt buộc phải xảy ra</em> — gửi email xác nhận đơn hàng, xử lý thanh toán, sinh báo
+      cáo dài — cần một hàng đợi thật sự đứng sau bởi Redis/RabbitMQ (Celery, RQ, arq...). API chỉ
+      nhận yêu cầu, đẩy vào hàng đợi, trả về <code>202 Accepted</code> kèm mã job, rồi để worker xử lý độc lập.
+    </p>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 760 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- client -->
+        <rect x="20" y="80" width="100" height="44" rx="8" fill="#eef1f5" stroke="#cbd5e1"/>
+        <text x="70" y="106" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#1f2937">Client</text>
+        <!-- API -->
+        <rect x="180" y="80" width="120" height="44" rx="8" fill="#ccfbf1" stroke="#0d9488"/>
+        <text x="240" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#0d9488">FastAPI</text>
+        <text x="240" y="114" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#475569">POST /jobs → 202</text>
+        <!-- queue -->
+        <rect x="360" y="80" width="120" height="44" rx="8" fill="#eef1f5" stroke="#1d7fae"/>
+        <text x="420" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#1d7fae">Redis Queue</text>
+        <text x="420" y="114" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#475569">broker</text>
+        <!-- worker -->
+        <rect x="540" y="40" width="120" height="40" rx="8" fill="#eef1f5" stroke="#cbd5e1"/>
+        <text x="600" y="64" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#1f2937">Worker #1</text>
+        <rect x="540" y="124" width="120" height="40" rx="8" fill="#eef1f5" stroke="#cbd5e1"/>
+        <text x="600" y="148" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#1f2937">Worker #2</text>
+
+        <line x1="120" y1="102" x2="178" y2="102" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#arrow1)"/>
+        <line x1="300" y1="102" x2="358" y2="102" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#arrow1)"/>
+        <line x1="480" y1="92" x2="538" y2="64" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#arrow1)"/>
+        <line x1="480" y1="112" x2="538" y2="142" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#arrow1)"/>
+        <path d="M 240 124 Q 240 175 130 124" fill="none" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#arrow1)"/>
+        <text x="180" y="178" font-family="JetBrains Mono, monospace" font-size="9" fill="#64748b">GET /jobs/{id} để poll trạng thái</text>
+      </svg>
+      <div class="dcap">Hình 2 — Mô hình job bất đồng bộ: nhận nhanh, xử lý đáng tin cậy, báo trạng thái qua polling hoặc webhook.</div>
+    </div>
+
+    <div class="callout">
+      <div class="ctitle">Quy tắc ghi nhớ</div>
+      <p>Nếu mất tác vụ đó khi pod restart là một <strong>lỗi nghiêm trọng</strong> đối với nghiệp vụ, nó không thuộc về <code>BackgroundTasks</code>.</p>
+    </div>
+
+    <div class="chapter-end"><span>HẾT CHƯƠNG 01</span></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- CHƯƠNG 2 — PYDANTIC -->
+  <!-- ============================================================ -->
+  <section class="chapter" id="c2">
+    <div class="chapter-head">
+      <span class="chnum">02</span>
+      <h2>Pydantic làm hàng rào dữ liệu</h2>
+    </div>
+    <p class="dek">Schema không chỉ để validate đầu vào — nó còn là tuyến phòng thủ cuối cùng ngăn dữ liệu nhạy cảm rò rỉ ra ngoài.</p>
+
+    <h3>Ba schema, không phải một</h3>
+    <p>
+      Sai lầm kinh điển: dùng <strong>một</strong> model cho cả nhận dữ liệu vào, lưu trữ, và trả dữ liệu ra.
+      Khi model lưu trữ có trường <code>is_admin</code>, và client có thể gửi field đó trong body POST,
+      bạn vừa mở ra lỗ hổng "mass assignment" — client tự phong mình làm admin. Ngược lại, nếu trả thẳng
+      object ORM ra ngoài mà không lọc, bạn vô tình trả luôn <code>hashed_password</code>.
+    </p>
+    <p>Giải pháp kỷ luật: tách <strong>ba model riêng biệt</strong> cho mỗi resource.</p>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 760 230" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="30" width="200" height="170" rx="10" fill="#eef1f5" stroke="#cbd5e1"/>
+        <text x="120" y="56" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1d7fae">UserCreate</text>
+        <text x="120" y="74" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#64748b">(đầu vào client)</text>
+        <text x="35" y="100" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#475569">email: EmailStr</text>
+        <text x="35" y="118" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#475569">password: str</text>
+        <text x="35" y="136" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#475569">display_name: str|None</text>
+        <text x="35" y="160" font-family="JetBrains Mono, monospace" font-size="9" fill="#c0392b">extra="forbid"</text>
+        <text x="35" y="178" font-family="JetBrains Mono, monospace" font-size="9" fill="#64748b">role không được nhận</text>
+
+        <rect x="280" y="30" width="200" height="170" rx="10" fill="#eef1f5" stroke="#cbd5e1"/>
+        <text x="380" y="56" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#c2540a">UserDB</text>
+        <text x="380" y="74" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#64748b">(nội bộ / ORM)</text>
+        <text x="295" y="100" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#475569">id: int</text>
+        <text x="295" y="118" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#475569">hashed_password: str</text>
+        <text x="295" y="136" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#475569">is_superuser: bool</text>
+        <text x="295" y="154" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#475569">stripe_id: str</text>
+        <text x="295" y="178" font-family="JetBrains Mono, monospace" font-size="9" fill="#64748b">không bao giờ ra khỏi service</text>
+
+        <rect x="540" y="30" width="200" height="170" rx="10" fill="#eef1f5" stroke="#cbd5e1"/>
+        <text x="640" y="56" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#0d9488">UserPublic</text>
+        <text x="640" y="74" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#64748b">(trả về client)</text>
+        <text x="555" y="100" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#475569">id: int</text>
+        <text x="555" y="118" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#475569">email: EmailStr</text>
+        <text x="555" y="136" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#475569">display_name: str|None</text>
+        <text x="555" y="160" font-family="JetBrains Mono, monospace" font-size="9" fill="#0d9488">whitelist-by-design</text>
+        <text x="555" y="178" font-family="JetBrains Mono, monospace" font-size="9" fill="#64748b">chỉ field khai báo mới lộ ra</text>
+      </svg>
+      <div class="dcap">Hình 3 — Ba schema độc lập: input bị giới hạn, lưu trữ giàu thông tin, output là whitelist tường minh.</div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label"><span>schemas/user.py</span><div class="dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="tok-kw">from</span> pydantic <span class="tok-kw">import</span> BaseModel, ConfigDict, EmailStr, Field, SecretStr
+
+<span class="tok-kw">class</span> <span class="tok-cls">UserCreate</span>(BaseModel):
+    <span class="tok-str">"""Những gì client ĐƯỢC PHÉP gửi lên khi đăng ký."""</span>
+    model_config = ConfigDict(extra=<span class="tok-str">"forbid"</span>)  <span class="tok-com"># field lạ → 422, không bị bỏ qua âm thầm</span>
+    email: EmailStr
+    password: SecretStr = Field(min_length=<span class="tok-dec">12</span>)
+    display_name: str | <span class="tok-kw">None</span> = <span class="tok-kw">None</span>
+
+<span class="tok-kw">class</span> <span class="tok-cls">UserPublic</span>(BaseModel):
+    <span class="tok-str">"""Những gì API trả về. Không bao giờ có password hay cờ nội bộ."""</span>
+    model_config = ConfigDict(from_attributes=<span class="tok-kw">True</span>)  <span class="tok-com"># đọc trực tiếp từ object ORM</span>
+    id: int
+    email: EmailStr
+    display_name: str | <span class="tok-kw">None</span>
+
+<span class="tok-dec">@app.post</span>(<span class="tok-str">"/users"</span>, response_model=UserPublic, status_code=<span class="tok-dec">201</span>)
+<span class="tok-kw">def</span> <span class="tok-fn">create_user</span>(payload: UserCreate, db: Session):
+    user = user_service.create(db, payload)
+    <span class="tok-kw">return</span> user  <span class="tok-com"># dù object có 15 field, response_model chỉ cho 3 field đi qua</span></code></pre>
+    </div>
+
+    <div class="callout danger">
+      <div class="ctitle">Đừng tin vào kỷ luật gọi hàm</div>
+      <p>
+        Đừng dựa vào việc "nhớ" gọi <code>.dict(exclude={"password"})</code> ở mọi nơi trả response —
+        chỉ cần một chỗ quên là rò rỉ dữ liệu. Hãy biến việc lọc field thành <strong>cấu trúc</strong>
+        (response_model riêng) thay vì <strong>quy ước</strong> (nhớ loại trừ field mỗi lần).
+      </p>
+    </div>
+
+    <h3>Phân biệt "không gửi" và "gửi null"</h3>
+    <p>
+      Với endpoint <code>PATCH</code>, JSON không tự phân biệt được giữa "client không gửi field này"
+      (giữ nguyên) và "client gửi field này = null" (xoá giá trị). Pydantic v2 theo dõi field nào
+      thực sự được client cung cấp qua <code>model_dump(exclude_unset=True)</code>.
+    </p>
+
+    <div class="code-block">
+      <div class="code-label"><span>schemas/task.py — PATCH đúng cách</span><div class="dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="tok-kw">class</span> <span class="tok-cls">TaskUpdate</span>(BaseModel):
+    <span class="tok-str">"""Mọi field đều optional, không có default mang ý nghĩa."""</span>
+    title: str | <span class="tok-kw">None</span> = <span class="tok-kw">None</span>
+    note: str | <span class="tok-kw">None</span> = <span class="tok-kw">None</span>
+
+<span class="tok-dec">@app.patch</span>(<span class="tok-str">"/tasks/{task_id}"</span>)
+<span class="tok-kw">def</span> <span class="tok-fn">update_task</span>(task_id: int, payload: TaskUpdate, db: Session):
+    <span class="tok-com"># exclude_unset=True: chỉ lấy field client THỰC SỰ gửi lên</span>
+    changes = payload.model_dump(exclude_unset=<span class="tok-kw">True</span>)
+    <span class="tok-com"># {"note": None}  → khách muốn XOÁ note</span>
+    <span class="tok-com"># {}               → khách không động đến field nào cả</span>
+    <span class="tok-kw">return</span> repo.update(db, task_id, changes)</code></pre>
+    </div>
+
+    <h3>Validator cấp field và cấp model</h3>
+    <table>
+      <tr><th>Công cụ</th><th>Khi nào dùng</th></tr>
+      <tr><td><code>Field(gt=0, le=1000)</code></td><td>Ràng buộc khai báo đơn giản — tự động hiện trong OpenAPI docs</td></tr>
+      <tr><td><code>@field_validator</code></td><td>Chuẩn hoá một field riêng lẻ: trim khoảng trắng, chuyển chữ thường</td></tr>
+      <tr><td><code>@model_validator(mode="after")</code></td><td>Ràng buộc liên-field: <code>ngay_ket_thuc &gt; ngay_bat_dau</code></td></tr>
+    </table>
+
+    <div class="code-block">
+      <div class="code-label"><span>schemas/booking.py</span><div class="dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="tok-kw">from</span> pydantic <span class="tok-kw">import</span> BaseModel, model_validator
+<span class="tok-kw">from</span> datetime <span class="tok-kw">import</span> date
+
+<span class="tok-kw">class</span> <span class="tok-cls">BookingCreate</span>(BaseModel):
+    check_in: date
+    check_out: date
+
+    <span class="tok-dec">@model_validator</span>(mode=<span class="tok-str">"after"</span>)
+    <span class="tok-kw">def</span> <span class="tok-fn">checkout_sau_checkin</span>(<span class="tok-kw">self</span>) -> <span class="tok-str">"BookingCreate"</span>:
+        <span class="tok-kw">if</span> <span class="tok-kw">self</span>.check_out <= <span class="tok-kw">self</span>.check_in:
+            <span class="tok-kw">raise</span> ValueError(<span class="tok-str">"check_out phải sau check_in"</span>)
+        <span class="tok-kw">return</span> <span class="tok-kw">self</span></code></pre>
+    </div>
+
+    <div class="chapter-end"><span>HẾT CHƯƠNG 02</span></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- CHƯƠNG 3 — DATABASE -->
+  <!-- ============================================================ -->
+  <section class="chapter" id="c3">
+    <div class="chapter-head">
+      <span class="chnum">03</span>
+      <h2>Database & Connection Pool</h2>
+    </div>
+    <p class="dek">API thì stateless, nhưng giá trị thực luôn nằm ở dữ liệu — và đa số sự cố production đến từ hai chỗ: truy vấn N+1 và pool kết nối hết chỗ.</p>
+
+    <h3>Session theo từng request</h3>
+    <p>
+      Mỗi request nên có session DB riêng, mở ra khi request bắt đầu, đóng lại khi kết thúc — kể cả
+      khi có lỗi. Trong FastAPI, cách làm chuẩn là một <strong>dependency kiểu yield</strong>: phần
+      trước <code>yield</code> chạy lúc setup, phần sau chạy lúc teardown, kể cả khi handler ném exception.
+    </p>
+
+    <div class="code-block">
+      <div class="code-label"><span>db/session.py</span><div class="dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="tok-kw">from</span> sqlalchemy.orm <span class="tok-kw">import</span> sessionmaker, Session
+<span class="tok-kw">from</span> sqlalchemy <span class="tok-kw">import</span> create_engine
+
+engine = create_engine(
+    settings.database_url,
+    pool_size=<span class="tok-dec">10</span>,        <span class="tok-com"># số kết nối "thường trực"</span>
+    max_overflow=<span class="tok-dec">5</span>,      <span class="tok-com"># cho phép vượt tạm khi cao điểm</span>
+    pool_pre_ping=<span class="tok-kw">True</span>,   <span class="tok-com"># kiểm tra kết nối còn sống trước khi dùng</span>
+    pool_recycle=<span class="tok-dec">1800</span>,   <span class="tok-com"># tái tạo kết nối cũ hơn 30 phút</span>
+)
+SessionLocal = sessionmaker(bind=engine)
+
+<span class="tok-kw">def</span> <span class="tok-fn">get_db</span>():
+    db = SessionLocal()
+    <span class="tok-kw">try</span>:
+        <span class="tok-kw">yield</span> db
+        db.commit()       <span class="tok-com"># thành công → lưu thay đổi</span>
+    <span class="tok-kw">except</span> Exception:
+        db.rollback()      <span class="tok-com"># lỗi → huỷ mọi thay đổi trong transaction</span>
+        <span class="tok-kw">raise</span>
+    <span class="tok-kw">finally</span>:
+        db.close()          <span class="tok-com"># LUÔN trả kết nối lại pool</span></code></pre>
+    </div>
+
+    <div class="callout danger">
+      <div class="ctitle">Vì sao finally quan trọng</div>
+      <p>
+        Thiếu khối <code>finally: db.close()</code>, một nhánh lỗi không được xử lý sẽ làm rò rỉ kết nối —
+        nó không bao giờ trả lại pool. Dưới tải cao và tỉ lệ lỗi tăng, pool cạn kiệt dần và toàn bộ
+        service đứng hình, dù phần lớn request vẫn hợp lệ.
+      </p>
+    </div>
+
+    <h3>Vấn đề N+1 — kẻ thù số một của hiệu năng ORM</h3>
+    <p>
+      Khi bạn lấy 100 task rồi với mỗi task lại truy cập <code>task.owner</code>, ORM "lazy loading"
+      mặc định sẽ bắn ra <strong>một query SELECT riêng cho mỗi owner</strong>. Kết quả: 1 query lấy
+      task + 100 query lấy owner = 101 round-trip database, thay vì 1 hoặc 2.
+    </p>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 760 240" xmlns="http://www.w3.org/2000/svg">
+        <text x="20" y="28" font-family="JetBrains Mono, monospace" font-size="11" fill="#c2540a">N+1: 1 query tasks + 100 query owner riêng lẻ</text>
+        <rect x="20" y="40" width="60" height="22" rx="4" fill="#ffedd5" stroke="#c2540a"/>
+        <text x="50" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#c2540a">tasks</text>
+        <g>
+          <rect x="100" y="40" width="36" height="16" rx="3" fill="#eef1f5" stroke="#94a3b8"/>
+          <rect x="142" y="40" width="36" height="16" rx="3" fill="#eef1f5" stroke="#94a3b8"/>
+          <rect x="184" y="40" width="36" height="16" rx="3" fill="#eef1f5" stroke="#94a3b8"/>
+          <rect x="226" y="40" width="36" height="16" rx="3" fill="#eef1f5" stroke="#94a3b8"/>
+          <rect x="268" y="40" width="36" height="16" rx="3" fill="#eef1f5" stroke="#94a3b8"/>
+          <text x="320" y="53" font-family="JetBrains Mono, monospace" font-size="10" fill="#64748b">... × 100 query owner riêng biệt</text>
+        </g>
+        <text x="20" y="100" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d9488">selectinload: 2 query tổng cộng</text>
+        <rect x="20" y="112" width="80" height="24" rx="4" fill="#ccfbf1" stroke="#0d9488"/>
+        <text x="60" y="128" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#0d9488">SELECT tasks</text>
+        <rect x="120" y="112" width="220" height="24" rx="4" fill="#ccfbf1" stroke="#0d9488"/>
+        <text x="230" y="128" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#0d9488">SELECT owners WHERE id IN (...)</text>
+
+        <text x="20" y="180" font-family="JetBrains Mono, monospace" font-size="10" fill="#64748b">1,000 dòng dữ liệu × 101 query (N+1) so với 2 query (eager load)</text>
+        <text x="20" y="198" font-family="JetBrains Mono, monospace" font-size="10" fill="#64748b">→ N+1 chạy "ổn" trên 10 dòng dev, sập p99 trên 10.000 dòng production</text>
+      </svg>
+      <div class="dcap">Hình 4 — selectinload gom các truy vấn con thành một câu lệnh duy nhất bằng WHERE id IN (...).</div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label"><span>repositories/task_repo.py — diệt N+1</span><div class="dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="tok-kw">from</span> sqlalchemy <span class="tok-kw">import</span> select
+<span class="tok-kw">from</span> sqlalchemy.orm <span class="tok-kw">import</span> selectinload
+
+<span class="tok-com"># ❌ Lazy loading mặc định → N+1 khi vòng lặp truy cập task.owner</span>
+stmt_cham = select(Task).limit(<span class="tok-dec">100</span>)
+
+<span class="tok-com"># ✅ selectinload: gom owner thành 1 truy vấn IN (...) duy nhất</span>
+stmt_nhanh = (
+    select(Task)
+    .options(selectinload(Task.owner))
+    .limit(<span class="tok-dec">100</span>)
+)
+<span class="tok-com"># Quy tắc chọn nhanh:</span>
+<span class="tok-com">#   selectinload  → quan hệ "nhiều" (to-many), tránh nhân bản dòng</span>
+<span class="tok-com">#   joinedload    → quan hệ "một" (to-one), gộp 1 lần JOIN duy nhất</span></code></pre>
+    </div>
+
+    <h3>Tính toán kích thước connection pool</h3>
+    <p>
+      Theo định luật Little: số kết nối cần thiết ≈ số request/giây × thời gian giữ kết nối trung bình.
+      Với 200 request/giây và mỗi truy vấn giữ kết nối 25ms, bạn chỉ cần khoảng 5 kết nối — ít hơn
+      nhiều so với trực giác. Nhưng nếu nhân lên với số worker, con số có thể vượt giới hạn
+      <code>max_connections</code> của Postgres rất nhanh.
+    </p>
+
+    <div class="code-block">
+      <div class="code-label"><span>tính nhanh — pool sizing</span><div class="dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="tok-com"># 8 pod × 4 worker × (pool_size=10 + max_overflow=5) = 600 kết nối khả dụng</span>
+<span class="tok-com"># Postgres mặc định: max_connections = 100</span>
+<span class="tok-com"># → 600 > 100: SỰ CỐ chắc chắn xảy ra khi tải tăng</span>
+<span class="tok-com">#</span>
+<span class="tok-com"># Giải pháp: PgBouncer đứng giữa app và Postgres,</span>
+<span class="tok-com"># gộp hàng trăm kết nối "rẻ" từ app thành vài chục kết nối thật tới DB.</span></code></pre>
+    </div>
+
+    <table>
+      <tr><th>Triệu chứng</th><th>Nguyên nhân khả dĩ</th><th>Hướng xử lý</th></tr>
+      <tr><td><code>QueuePool limit reached</code></td><td>Pool quá nhỏ hoặc query giữ kết nối quá lâu</td><td>Thêm PgBouncer, đặt statement_timeout</td></tr>
+      <tr><td>p99 tăng đột biến, p50 bình thường</td><td>Một nhóm request nhỏ bị N+1 hoặc thiếu index</td><td>Bật log đếm số query/request, đặt ngưỡng cảnh báo</td></tr>
+      <tr><td>Lỗi "connection closed unexpectedly"</td><td>Hạ tầng mạng (NAT, LB) tự ngắt kết nối rảnh</td><td><code>pool_pre_ping=True</code>, <code>pool_recycle</code> thấp hơn timeout hạ tầng</td></tr>
+    </table>
+
+    <div class="chapter-end"><span>HẾT CHƯƠNG 03</span></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- CHƯƠNG 4 — SECURITY -->
+  <!-- ============================================================ -->
+  <section class="chapter" id="c4">
+    <div class="chapter-head">
+      <span class="chnum">04</span>
+      <h2>Bảo mật: Auth & OWASP</h2>
+    </div>
+    <p class="dek">Phần lớn sự cố bảo mật API thật sự không phải lỗi xác thực (authn) — mà là lỗi phân quyền (authz): người dùng đã đăng nhập nhưng đọc được dữ liệu của người khác.</p>
+
+    <h3>Authentication vs Authorization</h3>
+    <p>
+      <strong>Authentication</strong> (authn) trả lời câu hỏi "bạn là ai" — mã <code>401</code> nghĩa là
+      "tôi không biết bạn là ai, hãy đăng nhập lại". <strong>Authorization</strong> (authz) trả lời
+      "bạn được phép làm gì" — mã <code>403</code> nghĩa là "tôi biết bạn là ai, nhưng không, bạn không
+      được phép". Tách hai khâu này ra hai dependency riêng biệt giúp logic rõ ràng và dễ kiểm thử hơn.
+    </p>
+
+    <div class="code-block">
+      <div class="code-label"><span>deps.py — chuỗi dependency xác thực</span><div class="dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="tok-kw">from</span> typing <span class="tok-kw">import</span> Annotated
+<span class="tok-kw">import</span> jwt
+<span class="tok-kw">from</span> fastapi <span class="tok-kw">import</span> Depends, HTTPException
+<span class="tok-kw">from</span> fastapi.security <span class="tok-kw">import</span> OAuth2PasswordBearer
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=<span class="tok-str">"/auth/token"</span>)
+
+<span class="tok-kw">def</span> <span class="tok-fn">get_current_user</span>(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: Session = Depends(get_db),
+) -> User:
+    <span class="tok-kw">try</span>:
+        payload = jwt.decode(
+            token, settings.jwt_secret,
+            algorithms=[<span class="tok-str">"HS256"</span>],   <span class="tok-com"># GHIM thuật toán — không bao giờ tin header token</span>
+            issuer=<span class="tok-str">"api.vidu.com"</span>,
+        )
+    <span class="tok-kw">except</span> jwt.InvalidTokenError:
+        <span class="tok-kw">raise</span> HTTPException(<span class="tok-dec">401</span>, <span class="tok-str">"Token không hợp lệ hoặc hết hạn"</span>)
+    user = db.get(User, int(payload[<span class="tok-str">"sub"</span>]))
+    <span class="tok-kw">if</span> user <span class="tok-kw">is</span> <span class="tok-kw">None</span> <span class="tok-kw">or</span> <span class="tok-kw">not</span> user.is_active:
+        <span class="tok-kw">raise</span> HTTPException(<span class="tok-dec">401</span>, <span class="tok-str">"Tài khoản không tồn tại hoặc bị khoá"</span>)
+    <span class="tok-kw">return</span> user
+
+<span class="tok-kw">class</span> <span class="tok-cls">RequireRole</span>:
+    <span class="tok-str">"""Dependency có tham số: kiểm tra quyền theo vai trò."""</span>
+    <span class="tok-kw">def</span> <span class="tok-fn">__init__</span>(<span class="tok-kw">self</span>, *roles: str):
+        <span class="tok-kw">self</span>.roles = <span class="tok-kw">set</span>(roles)
+
+    <span class="tok-kw">def</span> <span class="tok-fn">__call__</span>(<span class="tok-kw">self</span>, user: User = Depends(get_current_user)) -> User:
+        <span class="tok-kw">if</span> user.role <span class="tok-kw">not in</span> <span class="tok-kw">self</span>.roles:
+            <span class="tok-kw">raise</span> HTTPException(<span class="tok-dec">403</span>, <span class="tok-str">"Không đủ quyền"</span>)
+        <span class="tok-kw">return</span> user
+
+admin_router = APIRouter(dependencies=[Depends(RequireRole(<span class="tok-str">"admin"</span>))])</code></pre>
+    </div>
+
+    <h4>Vì sao phải ghim thuật toán JWT</h4>
+    <p>
+      Header của JWT khai báo thuật toán ký — và header này do <strong>kẻ tấn công kiểm soát hoàn toàn</strong>.
+      Một số thư viện cũ tin tưởng mù quáng giá trị này: kẻ tấn công đặt <code>"alg": "none"</code> và
+      gửi token không hề được ký. Vì vậy luôn truyền tường minh <code>algorithms=["HS256"]</code> khi giải
+      mã — không bao giờ để token tự chọn cách xác thực chính nó.
+    </p>
+
+    <h3>BOLA — lỗ hổng đứng đầu danh sách OWASP API</h3>
+    <p>
+      <strong>Broken Object-Level Authorization (BOLA)</strong> xảy ra khi endpoint kiểm tra "bạn đã
+      đăng nhập chưa" nhưng quên kiểm tra "đây có phải tài nguyên của bạn không". Ví dụ kinh điển:
+      <code>GET /orders/123</code> chỉ cần token hợp lệ, không kiểm tra <code>order.owner_id == user.id</code>
+      — kẻ tấn công chỉ cần đổi số ID tuần tự để đọc dữ liệu của bất kỳ ai.
+    </p>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 760 210" xmlns="http://www.w3.org/2000/svg">
+        <text x="20" y="26" font-family="JetBrains Mono, monospace" font-size="11" fill="#c2540a">❌ Lỗ hổng BOLA</text>
+        <rect x="20" y="38" width="340" height="60" rx="8" fill="#ffedd5" stroke="#c2540a"/>
+        <text x="32" y="58" font-family="JetBrains Mono, monospace" font-size="10" fill="#c2540a">GET /orders/123</text>
+        <text x="32" y="76" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#475569">if user_logged_in: return db.get(Order, 123)</text>
+        <text x="32" y="92" font-family="JetBrains Mono, monospace" font-size="9" fill="#c0392b">→ ai đăng nhập cũng đọc được order của người khác</text>
+
+        <text x="400" y="26" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d9488">✅ Lọc theo chủ sở hữu tại tầng query</text>
+        <rect x="400" y="38" width="340" height="60" rx="8" fill="#ccfbf1" stroke="#0d9488"/>
+        <text x="412" y="58" font-family="JetBrains Mono, monospace" font-size="10" fill="#0d9488">GET /orders/123</text>
+        <text x="412" y="76" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#475569">WHERE id=123 AND owner_id=:current_user</text>
+        <text x="412" y="92" font-family="JetBrains Mono, monospace" font-size="9" fill="#0d9488">→ không tồn tại = 404, không rò rỉ thông tin</text>
+
+        <rect x="20" y="120" width="720" height="70" rx="8" fill="#f1f5f9" stroke="#cbd5e1"/>
+        <text x="36" y="142" font-family="JetBrains Mono, monospace" font-size="10" fill="#1f2937">Nguyên tắc: đừng load object rồi MỚI kiểm tra quyền sở hữu.</text>
+        <text x="36" y="160" font-family="JetBrains Mono, monospace" font-size="10" fill="#1f2937">Hãy đưa owner_id vào ngay điều kiện WHERE — object không thuộc về bạn</text>
+        <text x="36" y="176" font-family="JetBrains Mono, monospace" font-size="10" fill="#1f2937">thì coi như không tồn tại (404), tránh xác nhận sự tồn tại của nó (403).</text>
+      </svg>
+      <div class="dcap">Hình 5 — BOLA xảy ra khi việc kiểm tra "có phải của bạn" tách rời khỏi câu truy vấn.</div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-label"><span>repositories/order_repo.py — chống BOLA tại tầng repository</span><div class="dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="tok-kw">class</span> <span class="tok-cls">OrderRepository</span>:
+    <span class="tok-kw">def</span> <span class="tok-fn">__init__</span>(<span class="tok-kw">self</span>, db: Session):
+        <span class="tok-kw">self</span>.db = db
+
+    <span class="tok-kw">def</span> <span class="tok-fn">get_owned</span>(<span class="tok-kw">self</span>, order_id: int, owner_id: int) -> Order | <span class="tok-kw">None</span>:
+        <span class="tok-str">"""Không có hàm get(id) trần trụi nào cho resource thuộc về user."""</span>
+        stmt = select(Order).where(
+            Order.id == order_id,
+            Order.owner_id == owner_id,   <span class="tok-com"># lọc ngay tại SQL, không lọc sau khi load</span>
+        )
+        <span class="tok-kw">return</span> <span class="tok-kw">self</span>.db.scalar(stmt)
+
+<span class="tok-dec">@router.get</span>(<span class="tok-str">"/orders/{order_id}"</span>)
+<span class="tok-kw">def</span> <span class="tok-fn">get_order</span>(order_id: int, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    order = OrderRepository(db).get_owned(order_id, user.id)
+    <span class="tok-kw">if</span> order <span class="tok-kw">is</span> <span class="tok-kw">None</span>:
+        <span class="tok-kw">raise</span> HTTPException(<span class="tok-dec">404</span>, <span class="tok-str">"Không tìm thấy đơn hàng"</span>)  <span class="tok-com"># 404, KHÔNG phải 403</span>
+    <span class="tok-kw">return</span> order</code></pre>
+    </div>
+
+    <h3>Mật khẩu: chậm là một tính năng</h3>
+    <p>
+      Không bao giờ băm mật khẩu bằng SHA-256 — thuật toán này được thiết kế để <em>nhanh</em>, nên kẻ
+      tấn công có thể thử hàng tỷ mật khẩu mỗi giây trên một bảng dữ liệu bị rò rỉ. Dùng
+      <code>bcrypt</code> hoặc <code>argon2</code>, vốn được thiết kế để chậm (100–300ms mỗi lần băm)
+      và có salt riêng cho từng mật khẩu.
+    </p>
+
+    <div class="code-block">
+      <div class="code-label"><span>security.py</span><div class="dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="tok-kw">from</span> passlib.context <span class="tok-kw">import</span> CryptContext
+
+pwd_context = CryptContext(schemes=[<span class="tok-str">"argon2"</span>], deprecated=<span class="tok-str">"auto"</span>)
+
+<span class="tok-kw">def</span> <span class="tok-fn">hash_password</span>(raw: str) -> str:
+    <span class="tok-kw">return</span> pwd_context.hash(raw)
+
+<span class="tok-kw">def</span> <span class="tok-fn">verify_password</span>(raw: str, hashed: str) -> bool:
+    <span class="tok-kw">return</span> pwd_context.verify(raw, hashed)
+
+<span class="tok-com"># Lỗi tinh tế cần tránh: trả lỗi khác nhau cho "email không tồn tại"</span>
+<span class="tok-com"># và "sai mật khẩu" → cho phép kẻ tấn công dò xem email nào đã đăng ký.</span>
+<span class="tok-com"># Luôn trả CÙNG MỘT thông báo lỗi chung cho cả hai trường hợp.</span></code></pre>
+    </div>
+
+    <h3>Rate limiting: token bucket</h3>
+    <p>
+      Giới hạn tần suất bảo vệ chi phí và chống lạm dụng. Thuật toán phổ biến nhất là
+      <strong>token bucket</strong>: mỗi định danh (IP, user, API key) có một "xô" chứa B token,
+      nạp lại với tốc độ r token/giây; mỗi request tiêu một token; xô cạn thì trả về
+      <code>429</code> kèm header <code>Retry-After</code>.
+    </p>
+
+    <div class="pill-row">
+      <span class="pill">login/signup → giới hạn chặt nhất</span>
+      <span class="pill">đọc dữ liệu công khai → giới hạn lỏng</span>
+      <span class="pill">Redis-backed → giới hạn đồng nhất qua nhiều worker</span>
+    </div>
+
+    <ul class="checklist">
+      <li>JWT luôn ghim algorithms=[...] tường minh khi decode</li>
+      <li>Mật khẩu băm bằng argon2/bcrypt, không bao giờ MD5/SHA</li>
+      <li>Mọi resource thuộc về user lọc owner_id ngay trong câu SQL</li>
+      <li>Resource không thuộc về bạn trả 404, không trả 403</li>
+      <li>CORS không thay thế cho authorization — nó chỉ bảo vệ trình duyệt</li>
+      <li>Rate limit lưu trạng thái ở Redis, không lưu in-memory mỗi worker</li>
+    </ul>
+
+    <div class="chapter-end"><span>HẾT CHƯƠNG 04</span></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- CHƯƠNG 5 — RAG & LLM -->
+  <!-- ============================================================ -->
+  <section class="chapter" id="c5">
+    <div class="chapter-head">
+      <span class="chnum">05</span>
+      <h2>Serving LLM & RAG</h2>
+    </div>
+    <p class="dek">LLM là một hệ thống xác suất — coi nó như một nguồn dữ liệu mạnh nhưng không đáng tin, và bọc nó trong cùng hàng rào validate bạn dùng cho input của người dùng.</p>
+
+    <h3>Vì sao cần một LLM Gateway riêng</h3>
+    <p>
+      Thay vì để mọi service trong hệ thống gọi thẳng API của OpenAI/Anthropic, hãy bọc nó trong một
+      service FastAPI trung gian. Một nơi để quản lý: xác thực, prompt template, guardrail, cache,
+      đo chi phí theo từng user, và chuyển đổi nhà cung cấp mà không cần sửa code phía client.
+    </p>
+
+    <h3>Stream token theo thời gian thực bằng SSE</h3>
+    <p>
+      Trải nghiệm chat chỉ "mượt" khi token đầu tiên xuất hiện sau vài trăm mili-giây, thay vì người
+      dùng phải đợi toàn bộ câu trả lời (có thể mất chục giây). <code>StreamingResponse</code> bọc một
+      async generator, đẩy từng đoạn dữ liệu ngay khi sinh ra.
+    </p>
+
+    <div class="code-block">
+      <div class="code-label"><span>routers/chat.py — stream token qua SSE</span><div class="dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="tok-kw">from</span> fastapi.responses <span class="tok-kw">import</span> StreamingResponse
+<span class="tok-kw">from</span> pydantic <span class="tok-kw">import</span> BaseModel, Field
+
+<span class="tok-kw">class</span> <span class="tok-cls">ChatIn</span>(BaseModel):
+    message: str = Field(min_length=<span class="tok-dec">1</span>, max_length=<span class="tok-dec">4000</span>)
+    max_tokens: int = Field(default=<span class="tok-dec">512</span>, le=<span class="tok-dec">2048</span>)  <span class="tok-com"># trần chi phí, không chỉ trần kỹ thuật</span>
+
+<span class="tok-dec">@router.post</span>(<span class="tok-str">"/chat/stream"</span>)
+<span class="tok-kw">async def</span> <span class="tok-fn">chat_stream</span>(req: ChatIn, user: User = Depends(get_current_user)):
+    <span class="tok-kw">await</span> guardrails.check_input(req.message)  <span class="tok-com"># kiểm tra TRƯỚC khi gọi model</span>
+
+    <span class="tok-kw">async def</span> <span class="tok-fn">token_stream</span>():
+        usage = {<span class="tok-str">"out_tokens"</span>: <span class="tok-dec">0</span>}
+        <span class="tok-kw">try</span>:
+            <span class="tok-kw">async for</span> chunk <span class="tok-kw">in</span> llm_client.stream(req.message, max_tokens=req.max_tokens):
+                usage[<span class="tok-str">"out_tokens"</span>] += <span class="tok-dec">1</span>
+                <span class="tok-kw">yield</span> <span class="tok-kw">f</span><span class="tok-str">"data: {chunk.json()}\n\n"</span>
+            <span class="tok-kw">yield</span> <span class="tok-str">"data: [DONE]\n\n"</span>
+        <span class="tok-kw">finally</span>:
+            <span class="tok-com"># chạy NGAY CẢ KHI client ngắt kết nối giữa chừng — đo chi phí đúng</span>
+            <span class="tok-kw">await</span> metering.record(user.id, usage)
+
+    <span class="tok-kw">return</span> StreamingResponse(token_stream(), media_type=<span class="tok-str">"text/event-stream"</span>)</code></pre>
+    </div>
+
+    <div class="callout">
+      <div class="ctitle">Đừng quên khối finally</div>
+      <p>
+        Client ngắt kết nối giữa chừng (đóng tab, mất mạng) là chuyện xảy ra liên tục với streaming.
+        Nếu việc đo token tiêu thụ nằm ngoài <code>finally</code>, bạn sẽ mất dấu chi phí của chính
+        những request bị huỷ giữa chừng — thường lại là những request tốn kém nhất.
+      </p>
+    </div>
+
+    <h3>Kiến trúc RAG: từ câu hỏi đến câu trả lời có trích dẫn</h3>
+    <p>
+      Retrieval-Augmented Generation gồm hai luồng riêng biệt: <strong>nạp dữ liệu</strong> (chia nhỏ
+      tài liệu → tạo embedding → lưu vào vector DB) chạy một lần hoặc định kỳ, và <strong>truy vấn</strong>
+      (embed câu hỏi → tìm đoạn liên quan → đưa vào prompt → sinh câu trả lời) chạy mỗi lần người dùng hỏi.
+    </p>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 760 280" xmlns="http://www.w3.org/2000/svg">
+        <text x="20" y="24" font-family="JetBrains Mono, monospace" font-size="11" fill="#64748b">Luồng nạp dữ liệu (chạy nền, định kỳ)</text>
+        <rect x="20" y="34" width="110" height="38" rx="6" fill="#eef1f5" stroke="#cbd5e1"/>
+        <text x="75" y="58" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#1f2937">Tài liệu</text>
+        <rect x="160" y="34" width="110" height="38" rx="6" fill="#eef1f5" stroke="#cbd5e1"/>
+        <text x="215" y="58" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#1f2937">Chia nhỏ + Embed</text>
+        <rect x="300" y="34" width="130" height="38" rx="6" fill="#eef1f5" stroke="#1d7fae"/>
+        <text x="365" y="58" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#1d7fae">Vector DB (pgvector)</text>
+        <line x1="130" y1="53" x2="158" y2="53" stroke="#94a3b8" marker-end="url(#arrow1)"/>
+        <line x1="270" y1="53" x2="298" y2="53" stroke="#94a3b8" marker-end="url(#arrow1)"/>
+
+        <text x="20" y="116" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d9488">Luồng truy vấn (mỗi câu hỏi của người dùng)</text>
+        <rect x="20" y="128" width="90" height="38" rx="6" fill="#eef1f5" stroke="#cbd5e1"/>
+        <text x="65" y="152" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#1f2937">Câu hỏi</text>
+        <rect x="140" y="128" width="100" height="38" rx="6" fill="#ccfbf1" stroke="#0d9488"/>
+        <text x="190" y="152" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#0d9488">Embed</text>
+        <rect x="270" y="128" width="120" height="38" rx="6" fill="#ccfbf1" stroke="#0d9488"/>
+        <text x="330" y="152" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#0d9488">Top-k tương tự</text>
+        <rect x="420" y="128" width="120" height="38" rx="6" fill="#ccfbf1" stroke="#0d9488"/>
+        <text x="480" y="152" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#0d9488">Ghép prompt</text>
+        <rect x="570" y="128" width="110" height="38" rx="6" fill="#ffedd5" stroke="#c2540a"/>
+        <text x="625" y="152" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#c2540a">LLM sinh</text>
+
+        <line x1="110" y1="147" x2="138" y2="147" stroke="#94a3b8" marker-end="url(#arrow1)"/>
+        <line x1="240" y1="147" x2="268" y2="147" stroke="#94a3b8" marker-end="url(#arrow1)"/>
+        <line x1="390" y1="147" x2="418" y2="147" stroke="#94a3b8" marker-end="url(#arrow1)"/>
+        <line x1="540" y1="147" x2="568" y2="147" stroke="#94a3b8" marker-end="url(#arrow1)"/>
+        <path d="M365 72 L365 100 L330 100 L330 126" fill="none" stroke="#94a3b8" stroke-dasharray="3,3" marker-end="url(#arrow1)"/>
+
+        <rect x="20" y="200" width="660" height="60" rx="8" fill="#f1f5f9" stroke="#cbd5e1"/>
+        <text x="36" y="222" font-family="JetBrains Mono, monospace" font-size="10" fill="#1f2937">Lọc quyền truy cập (ACL) phải nằm TRONG câu SQL truy vấn vector,</text>
+        <text x="36" y="240" font-family="JetBrains Mono, monospace" font-size="10" fill="#1f2937">không phải dặn LLM "đừng đọc tài liệu của team khác" — mô hình ngôn ngữ</text>
+        <text x="36" y="252" font-family="JetBrains Mono, monospace" font-size="9" fill="#64748b">không phải là một ranh giới bảo mật.</text>
+      </svg>
+      <div class="dcap">Hình 6 — Kiến trúc RAG: nạp dữ liệu chạy nền, truy vấn chạy theo từng câu hỏi, ACL nằm ở tầng database.</div>
+    </div>
+
+    <h3>Validate đầu ra của LLM như validate input không tin cậy</h3>
+    <p>
+      Một mô hình ngôn ngữ là nguồn dữ liệu xác suất — coi đầu ra của nó giống hệt như input chưa qua
+      kiểm chứng từ người dùng. Ép nó trả JSON, parse qua Pydantic, và nếu lỗi validate thì gửi lại
+      lỗi cho model tự sửa một lần trước khi bỏ cuộc.
+    </p>
+
+    <div class="code-block">
+      <div class="code-label"><span>services/extract.py — ép LLM tuân theo schema</span><div class="dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="tok-kw">from</span> pydantic <span class="tok-kw">import</span> BaseModel, ValidationError, Field
+<span class="tok-kw">from</span> decimal <span class="tok-kw">import</span> Decimal
+<span class="tok-kw">from</span> typing <span class="tok-kw">import</span> Literal
+
+<span class="tok-kw">class</span> <span class="tok-cls">HoaDonTrichXuat</span>(BaseModel):
+    nha_cung_cap: str
+    tong_tien: Decimal = Field(ge=<span class="tok-dec">0</span>)
+    don_vi: Literal[<span class="tok-str">"VND"</span>, <span class="tok-str">"USD"</span>]
+
+<span class="tok-kw">async def</span> <span class="tok-fn">trich_xuat_hoa_don</span>(van_ban: str) -> HoaDonTrichXuat:
+    prompt = PROMPT_MAU.format(text=van_ban)
+    <span class="tok-kw">for</span> lan_thu <span class="tok-kw">in</span> <span class="tok-kw">range</span>(<span class="tok-dec">2</span>):
+        raw = <span class="tok-kw">await</span> llm.complete(prompt, json_mode=<span class="tok-kw">True</span>)
+        <span class="tok-kw">try</span>:
+            <span class="tok-kw">return</span> HoaDonTrichXuat.model_validate_json(raw)
+        <span class="tok-kw">except</span> ValidationError <span class="tok-kw">as</span> e:
+            <span class="tok-com"># Đưa lỗi validate ngược lại cho model để nó tự sửa — thường thành công ngay lần 2</span>
+            prompt = <span class="tok-kw">f</span><span class="tok-str">"{prompt}\n\nKết quả trước bị lỗi:\n{e}\nHãy trả JSON đã sửa."</span>
+    <span class="tok-kw">raise</span> HTTPException(<span class="tok-dec">502</span>, <span class="tok-str">"Mô hình không trả về dữ liệu hợp lệ"</span>)</code></pre>
+    </div>
+
+    <h3>Prompt injection: phòng thủ phân lớp</h3>
+    <p>
+      Không có cách nào chặn prompt injection 100%, nhưng các lớp phòng thủ kết hợp giúp giảm rủi ro
+      đáng kể: cấp quyền tối thiểu cho mọi tool mà LLM có thể gọi, không bao giờ để đầu ra của model
+      tự động thực thi hành động nhạy cảm mà không qua xác nhận, và luôn validate output trước khi
+      trả về hoặc dùng nó để gọi hành động khác.
+    </p>
+
+    <ul class="checklist">
+      <li>Mọi response từ LLM đều bọc model_version để biết model nào đã sinh ra nó</li>
+      <li>max_tokens là một ràng buộc Pydantic — đồng thời là giới hạn chi phí</li>
+      <li>ACL của RAG nằm trong câu SQL, không nằm trong lời dặn prompt</li>
+      <li>Câu trả lời không có trích dẫn hợp lệ → từ chối trả lời thay vì bịa</li>
+      <li>finally luôn chạy để đo token dùng được, kể cả khi client ngắt kết nối</li>
+    </ul>
+
+    <div class="chapter-end"><span>HẾT CHƯƠNG 05</span></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- CHƯƠNG 6 — PRODUCTION CHECKLIST -->
+  <!-- ============================================================ -->
+  <section class="chapter" id="c6">
+    <div class="chapter-head">
+      <span class="chnum">06</span>
+      <h2>Production Checklist</h2>
+    </div>
+    <p class="dek">Danh sách kiểm tra cuối cùng trước khi đưa service ra phục vụ người dùng thật — tổng hợp lại các nguyên tắc đã nêu ở những chương trước.</p>
+
+    <h3>Liveness vs Readiness — đừng nhầm lẫn hai loại probe</h3>
+    <p>
+      <strong>Liveness</strong> trả lời "tiến trình này có bị treo không" — nếu sai, Kubernetes sẽ
+      <em>restart</em> pod. <strong>Readiness</strong> trả lời "pod này có sẵn sàng nhận traffic không"
+      — nếu sai, pod chỉ bị rút khỏi load balancer, không bị restart. Nhầm hai loại này là một lỗi
+      kinh điển: nếu liveness probe lại đi kiểm tra database, một lần database chập chờn 30 giây sẽ
+      khiến <strong>toàn bộ</strong> pod bị restart đồng loạt — biến một sự cố nhỏ thành downtime toàn diện.
+    </p>
+
+    <div class="code-block">
+      <div class="code-label"><span>routers/health.py</span><div class="dots"><span></span><span></span><span></span></div></div>
+      <pre><code><span class="tok-dec">@app.get</span>(<span class="tok-str">"/health/live"</span>)
+<span class="tok-kw">def</span> <span class="tok-fn">live</span>():
+    <span class="tok-str">"""Chỉ hỏi: tiến trình có phản hồi không. KHÔNG đụng tới dependency."""</span>
+    <span class="tok-kw">return</span> {<span class="tok-str">"status"</span>: <span class="tok-str">"ok"</span>}
+
+<span class="tok-dec">@app.get</span>(<span class="tok-str">"/health/ready"</span>)
+<span class="tok-kw">async def</span> <span class="tok-fn">ready</span>(db: Session = Depends(get_db)):
+    <span class="tok-str">"""Hỏi: có sẵn sàng nhận traffic không. Kiểm tra dependency thiết yếu."""</span>
+    <span class="tok-kw">await</span> db.execute(text(<span class="tok-str">"SELECT 1"</span>))
+    <span class="tok-kw">if</span> <span class="tok-kw">not</span> app.state.model_loaded:
+        <span class="tok-kw">raise</span> HTTPException(<span class="tok-dec">503</span>, <span class="tok-str">"Mô hình chưa nạp xong"</span>)
+    <span class="tok-kw">return</span> {<span class="tok-str">"status"</span>: <span class="tok-str">"ready"</span>}</code></pre>
+    </div>
+
+    <h3>Ba trụ cột quan sát hệ thống (Observability)</h3>
+    <table>
+      <tr><th>Trụ cột</th><th>Trả lời câu hỏi</th><th>Công cụ phổ biến</th></tr>
+      <tr><td>Logs có cấu trúc</td><td>"Chuyện gì đã xảy ra với request cụ thể này?"</td><td>JSON log + request ID</td></tr>
+      <tr><td>Metrics</td><td>"Hệ thống đang vận hành thế nào ở quy mô tổng thể?"</td><td>Prometheus + Grafana</td></tr>
+      <tr><td>Traces</td><td>"Request này tốn thời gian ở đâu, qua bao nhiêu service?"</td><td>OpenTelemetry</td></tr>
+    </table>
+
+    <div class="callout warn">
+      <div class="ctitle">Cảnh báo theo triệu chứng, không theo nguyên nhân</div>
+      <p>
+        Báo động khi "CPU vượt 80%" là một anti-pattern — CPU cao có thể hoàn toàn lành mạnh (đang tận
+        dụng tốt tài nguyên). Hãy báo động theo <strong>SLO bị vi phạm</strong> (tỉ lệ lỗi tăng, độ trễ
+        p99 vượt ngưỡng) — những gì người dùng thực sự cảm nhận được. Nguyên nhân (CPU, pool, queue
+        depth) chỉ nên xuất hiện trên dashboard bạn mở ra <em>sau khi</em> đã được báo động.
+      </p>
+    </div>
+
+    <h3>Checklist trước khi go-live</h3>
+    <ul class="checklist">
+      <li>Mọi endpoint đều có response_model whitelist tường minh field trả về</li>
+      <li>Connection pool được tính toán theo Little's Law, không đoán mò</li>
+      <li>Mọi lệnh gọi ra ngoài (DB, API, LLM) đều có timeout ngắn hơn timeout của client gọi nó</li>
+      <li>Liveness probe không đụng tới database; readiness probe có đụng</li>
+      <li>Secrets nằm trong secret manager, không nằm trong code hay image</li>
+      <li>Đã chạy load test tới điểm "knee" của đường cong độ trễ, không chỉ test một request đơn lẻ</li>
+      <li>Có runbook cho 3-5 kịch bản sự cố thường gặp nhất (DB down, LLM provider down, pool cạn)</li>
+      <li>Đã thử rollback ít nhất một lần trên thực tế, không chỉ trên giấy</li>
+    </ul>
+
+    <div class="callout">
+      <div class="ctitle">Tóm gọn cả tài liệu trong một câu</div>
+      <p>
+        Một API FastAPI sống sót được trong production không phải nhờ framework, mà nhờ kỷ luật ở bốn
+        ranh giới: ranh giới giữa code chặn và code bất đồng bộ, ranh giới giữa dữ liệu tin cậy và
+        chưa tin cậy (kể cả khi nguồn đó là một LLM), ranh giới giữa "đã đăng nhập" và "được phép",
+        và ranh giới giữa tài nguyên hữu hạn (pool, token, tiền) và lưu lượng truy cập vô hạn.
+      </p>
+    </div>
+
+    <div class="chapter-end"><span>HẾT TÀI LIỆU</span></div>
+  </section>
+
+  <footer>
+    Tài liệu tự biên soạn cho mục đích học tập · Nội dung, code và sơ đồ minh hoạ được viết riêng cho bản này.
+  </footer>
+
+</div>
+</main>
+</div>
+
+<script>
+  // Highlight active TOC item khi cuộn
+  const sections = document.querySelectorAll('.chapter, .cover');
+  const links = document.querySelectorAll('.toc-list a');
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const id = entry.target.id;
+        links.forEach(l=>l.classList.toggle('active', l.getAttribute('href') === '#'+id));
+      }
+    });
+  }, {rootMargin: '-10% 0px -75% 0px'});
+  sections.forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>

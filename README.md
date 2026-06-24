@@ -2,7 +2,8 @@
 
 ![Visual Notebook overview](images/visual-notebook-overview.png)
 
-Demo HTML files: `/demos/`, `/demos/fastapi-production.html`,
+Demo source files live in [`docs/`](docs/). Public preview URLs:
+`/demos/`, `/demos/fastapi-production.html`,
 `/demos/calculus-derivative.html`, `/demos/git-workflow.html`.
 
 Trạm quản lý file **HTML/Markdown/PDF** học tập với **trợ lý AI** — tổ chức trực quan kiểu Notion,

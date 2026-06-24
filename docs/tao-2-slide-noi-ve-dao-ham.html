@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Đạo hàm siêu ngầu</title>
+<style>
+:root{--bg:#0b0f17;--fg:#e5e7eb;--muted:#94a3b8;--line:#1e293b;--accent:#22d3ee;--accent2:#34d399;--radius:12px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 ui-sans-serif,system-ui,sans-serif}
+.container{max-width:880px;margin:0 auto;padding:56px 24px}
+h1,h2,h3{font-weight:700;letter-spacing:-.01em}
+h1{font-size:2rem;margin:0 0 .4em}
+.mono,code,kbd{font-family:ui-monospace,"Cascadia Code",Consolas,monospace}
+.accent{color:var(--accent)}
+a{color:var(--accent)}
+.card{background:#0f172a;border:1px solid var(--line);border-radius:var(--radius);padding:22px;
+box-shadow:0 0 0 1px rgba(34,211,238,.04),0 0 40px -20px rgba(34,211,238,.4)}
+code{background:#0f172a;border:1px solid var(--line);padding:.15em .4em;border-radius:6px}
+
+html,body{height:100%;overflow:hidden}
+body{
+  background:
+    radial-gradient(circle at 20% 10%, rgba(34,211,238,.16), transparent 28%),
+    radial-gradient(circle at 80% 85%, rgba(52,211,153,.13), transparent 32%),
+    linear-gradient(135deg,#05070d 0%,#0b0f17 45%,#111827 100%);
+}
+.container{
+  max-width:none;
+  width:100vw;
+  height:100vh;
+  padding:clamp(12px,2vw,28px);
+  display:grid;
+  place-items:center;
+}
+.deck{
+  position:relative;
+  width:min(96vw,1400px);
+  aspect-ratio:16/9;
+  max-height:calc(100vh - 56px);
+  border:1px solid rgba(148,163,184,.22);
+  border-radius:22px;
+  overflow:hidden;
+  background:
+    linear-gradient(rgba(34,211,238,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34,211,238,.035) 1px, transparent 1px),
+    radial-gradient(circle at 50% 20%, rgba(34,211,238,.08), transparent 35%),
+    #070b12;
+  background-size:38px 38px,38px 38px,100% 100%,100% 100%;
+  box-shadow:0 24px 90px rgba(0,0,0,.55),0 0 70px -38px var(--accent);
+}
+.slide{
+  position:absolute;
+  inset:0;
+  padding:clamp(28px,5vw,76px);
+  display:grid;
+  grid-template-columns:1.02fr .98fr;
+  gap:clamp(20px,4vw,56px);
+  align-items:center;
+  opacity:0;
+  transform:translateX(4%) scale(.985);
+  pointer-events:none;
+  transition:opacity .55s ease, transform .55s ease;
+}
+.slide.active{
+  opacity:1;
+  transform:translateX(0) scale(1);
+  pointer-events:auto;
+}
+.slide::before{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  background:conic-gradient(from 180deg, transparent, rgba(34,211,238,.07), transparent, rgba(52,211,153,.06), transparent);
+  animation:scanSpin 18s linear infinite;
+  z-index:0;
+}
+.slide > *{position:relative;z-index:1}
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  color:var(--accent2);
+  font:700 13px/1 ui-monospace,"Cascadia Code",Consolas,monospace;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  margin-bottom:16px;
+}
+.eyebrow::before{
+  content:"";
+  width:10px;height:10px;border-radius:50%;
+  background:var(--accent2);
+  box-shadow:0 0 16px var(--accent2);
+  animation:pulse 1.4s ease-in-out infinite;
+}
+h1{
+  font-size:clamp(2.2rem,6.4vw,5.9rem);
+  line-height:.96;
+  margin:0 0 18px;
+  text-shadow:0 0 28px rgba(34,211,238,.22);
+}
+h2{
+  font-size:clamp(1.9rem,4.4vw,4.35rem);
+  line-height:1.02;
+  margin:0 0 20px;
+}
+.lead{
+  color:#cbd5e1;
+  font-size:clamp(1rem,1.6vw,1.35rem);
+  max-width:62ch;
+}
+.neon{
+  color:var(--accent);
+  text-shadow:0 0 16px rgba(34,211,238,.65);
+}
+.panel{
+  border:1px solid rgba(34,211,238,.28);
+  border-radius:20px;
+  background:linear-gradient(180deg,rgba(15,23,42,.82),rgba(2,6,23,.64));
+  box-shadow:0 0 0 1px rgba(34,211,238,.05), inset 0 0 30px rgba(34,211,238,.035), 0 0 46px -26px var(--accent);
+  padding:22px;
+}
+.formula{
+  font:700 clamp(1.15rem,2vw,1.75rem)/1.45 ui-monospace,"Cascadia Code",Consolas,monospace;
+  color:#f8fafc;
+}
+.formula .dim{color:var(--muted)}
+.bullets{
+  display:grid;
+  gap:14px;
+  margin-top:24px;
+}
+.bullet{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  padding:13px 14px;
+  border:1px solid rgba(148,163,184,.16);
+  border-radius:14px;
+  background:rgba(15,23,42,.55);
+}
+.bullet b{color:var(--accent2)}
+.dot{
+  flex:0 0 9px;
+  margin-top:9px;
+  width:9px;height:9px;border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 14px var(--accent);
+}
+.graphBox{
+  position:relative;
+  min-height:390px;
+  border-radius:22px;
+  overflow:hidden;
+  border:1px solid rgba(148,163,184,.22);
+  background:
+    linear-gradient(rgba(148,163,184,.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148,163,184,.09) 1px, transparent 1px),
+    radial-gradient(circle at 54% 46%, rgba(34,211,238,.16), transparent 40%),
+    #020617;
+  background-size:34px 34px,34px 34px,100% 100%,100% 100%;
+  box-shadow:inset 0 0 60px rgba(0,0,0,.45);
+}
+.graphBox svg{position:absolute;inset:0;width:100%;height:100%}
+.curve{
+  fill:none;
+  stroke:var(--accent);
+  stroke-width:4;
+  stroke-linecap:round;
+  filter:drop-shadow(0 0 9px rgba(34,211,238,.85));
+  stroke-dasharray:900;
+  stroke-dashoffset:900;
+  animation:drawCurve 2.4s ease forwards;
+}
+.secant{
+  stroke:#f97316;
+  stroke-width:3.5;
+  stroke-linecap:round;
+  filter:drop-shadow(0 0 10px rgba(249,115,22,.8));
+  transform-origin:260px 213px;
+  animation:secantToTangent 4.6s cubic-bezier(.65,0,.2,1) infinite alternate;
+}
+.tangent{
+  stroke:var(--accent2);
+  stroke-width:4;
+  stroke-linecap:round;
+  filter:drop-shadow(0 0 12px rgba(52,211,153,.85));
+  opacity:.25;
+  animation:tangentGlow 4.6s ease-in-out infinite alternate;
+}
+.pointA,.pointB{
+  fill:#fff;
+  stroke:var(--accent);
+  stroke-width:3;
+  filter:drop-shadow(0 0 10px rgba(34,211,238,.9));
+}
+.pointB{
+  fill:#fb923c;
+  stroke:#fed7aa;
+  animation:pointSlide 4.6s cubic-bezier(.65,0,.2,1) infinite alternate;
+}
+.hud{
+  position:static;
+  left:18px;right:18px;bottom:18px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:10px;
+}
+.metric{
+  border:1px solid rgba(34,211,238,.22);
+  background:rgba(2,6,23,.72);
+  border-radius:12px;
+  padding:10px 12px;
+  font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+  color:#cbd5e1;
+}
+.metric strong{display:block;color:var(--accent2);font-size:1.15rem}
+.racer{
+  position:relative;
+  height:420px;
+  border-radius:24px;
+  overflow:hidden;
+  border:1px solid rgba(52,211,153,.24);
+  background:
+    radial-gradient(circle at center, rgba(52,211,153,.13), transparent 42%),
+    linear-gradient(90deg,rgba(34,211,238,.07),transparent 24%,transparent 76%,rgba(52,211,153,.07)),
+    #020617;
+}
+.track{
+  position:absolute;
+  left:8%;right:8%;top:50%;
+  height:5px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  box-shadow:0 0 22px rgba(34,211,238,.55);
+  border-radius:999px;
+}
+.car{
+  position:absolute;
+  top:calc(50% - 34px);
+  left:8%;
+  width:76px;height:44px;
+  border-radius:18px 24px 14px 14px;
+  background:linear-gradient(135deg,#67e8f9,#34d399);
+  box-shadow:0 0 26px rgba(52,211,153,.75);
+  animation:carMove 4s cubic-bezier(.15,.8,.25,1) infinite alternate;
+}
+.car::before{
+  content:"";
+  position:absolute;
+  inset:9px 15px auto 22px;
+  height:14px;
+  border-radius:10px;
+  background:#082f49;
+}
+.car::after{
+  content:"";
+  position:absolute;
+  left:-55px;top:15px;
+  width:60px;height:10px;border-radius:999px;
+  background:linear-gradient(90deg,transparent,rgba(34,211,238,.9));
+  filter:blur(1px);
+}
+.speedRing{
+  position:absolute;
+  width:210px;height:210px;
+  border-radius:50%;
+  right:9%;top:20%;
+  border:1px solid rgba(34,211,238,.28);
+  background:conic-gradient(from -90deg, var(--accent2) 0 68%, rgba(30,41,59,.75) 68% 100%);
+  box-shadow:0 0 38px -18px var(--accent2);
+  display:grid;
+  place-items:center;
+  animation:ringBeat 2s ease-in-out infinite;
+}
+.speedRing::before{
+  content:"";
+  position:absolute;
+  inset:18px;
+  border-radius:50%;
+  background:#020617;
+  border:1px solid rgba(148,163,184,.18);
+}
+.speedText{
+  position:relative;
+  z-index:1;
+  text-align:center;
+  font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+}
+.speedText b{display:block;font-size:2.3rem;color:#fff}
+.speedText span{color:var(--accent2);font-size:.85rem}
+.ghostTicks{
+  position:absolute;
+  inset:0;
+  background:repeating-linear-gradient(90deg, transparent 0 58px, rgba(148,163,184,.18) 58px 60px);
+  opacity:.55;
+  animation:tickFlow 1.2s linear infinite;
+}
+.controls{
+  position:fixed;
+  left:50%;
+  bottom:12px;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  z-index:20;
+  background:rgba(2,6,23,.72);
+  border:1px solid rgba(148,163,184,.2);
+  border-radius:999px;
+  padding:8px 10px;
+  backdrop-filter:blur(10px);
+}
+button{
+  border:1px solid rgba(34,211,238,.32);
+  background:#0f172a;
+  color:var(--fg);
+  border-radius:999px;
+  padding:8px 13px;
+  cursor:pointer;
+  font-weight:700;
+}
+button:hover{box-shadow:0 0 18px -8px var(--accent);border-color:var(--accent)}
+.progress{
+  position:fixed;
+  left:0;top:0;
+  height:4px;
+  width:50%;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  box-shadow:0 0 14px var(--accent);
+  z-index:30;
+  transition:width .35s ease;
+}
+.counter{
+  font:700 13px/1 ui-monospace,"Cascadia Code",Consolas,monospace;
+  color:var(--muted);
+  min-width:48px;
+  text-align:center;
+}
+.notes{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+@keyframes scanSpin{to{transform:rotate(360deg)}}
+@keyframes pulse{50%{transform:scale(1.55);opacity:.55}}
+@keyframes drawCurve{to{stroke-dashoffset:0}}
+@keyframes secantToTangent{
+  0%{transform:rotate(-25deg) scaleX(1.08)}
+  100%{transform:rotate(-2deg) scaleX(.92)}
+}
+@keyframes tangentGlow{100%{opacity:1}}
+@keyframes pointSlide{
+  0%{transform:translate(134px,-122px)}
+  100%{transform:translate(22px,-20px)}
+}
+@keyframes carMove{
+  0%{left:8%;transform:translateY(0) scaleX(1)}
+  52%{transform:translateY(-28px) scaleX(1.08)}
+  100%{left:72%;transform:translateY(0) scaleX(1)}
+}
+@keyframes tickFlow{to{transform:translateX(-60px)}}
+@keyframes ringBeat{50%{filter:brightness(1.35);transform:scale(1.035)}}
+
+@media (max-width:820px){
+  html,body{overflow:auto}
+  .container{height:100svh;padding:10px}
+  .deck{width:100%;max-height:none}
+  .slide{grid-template-columns:1fr;padding:24px;gap:16px}
+  .graphBox,.racer{min-height:240px;height:240px}
+  .hud{grid-template-columns:1fr;position:static;margin:12px}
+  .speedRing{width:138px;height:138px;right:6%;top:12%}
+  .speedText b{font-size:1.45rem}
+  h1{font-size:2.25rem}
+  h2{font-size:2rem}
+}
+@media print{
+  html,body{height:auto;overflow:visible;background:#fff;color:#000}
+  .container{display:block;width:auto;height:auto;padding:0}
+  .deck{width:100%;max-height:none;aspect-ratio:auto;border:0;box-shadow:none;background:#fff;overflow:visible}
+  .slide{position:relative;opacity:1;transform:none;page-break-after:always;width:100%;height:100vh;color:#000;background:#fff}
+  .slide::before,.controls,.progress{display:none}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="progress" id="progress" aria-hidden="true"></div>
+
+  <main class="deck" aria-label="Slide deck: Đạo hàm siêu ngầu">
+    <section class="slide active" aria-label="Slide 1">
+      <div>
+        <div class="eyebrow">Calculus Core // Limit Engine</div>
+        <h1>Đạo hàm là <span class="neon">radar của thay đổi</span></h1>
+        <p class="lead">
+          Hãy tưởng tượng bạn đang phóng drone qua một thành phố neon. Không đủ biết “đã đi được bao xa”;
+          ta cần biết <b>ngay tại khoảnh khắc này</b> nó đang đổi hướng nhanh thế nào.
+          Đó chính là vai trò của đạo hàm.
+        </p>
+
+        <div class="bullets">
+          <div class="bullet"><span class="dot"></span><span><b>Cát tuyến</b> đo độ dốc giữa hai điểm trên đường cong.</span></div>
+          <div class="bullet"><span class="dot"></span><span>Khi hai điểm ép sát nhau, cát tuyến “biến hình” thành <b>tiếp tuyến</b>.</span></div>
+          <div class="bullet"><span class="dot"></span><span>Độ dốc tiếp tuyến là <b>tốc độ thay đổi tức thời</b>: đạo hàm tại điểm đó.</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="graphBox" role="img" aria-label="Minh họa cát tuyến tiến dần thành tiếp tuyến của đồ thị">
+          <svg viewBox="0 0 560 390" aria-hidden="true">
+            <line x1="38" y1="320" x2="525" y2="320" stroke="#334155" stroke-width="2"/>
+            <line x1="70" y1="36" x2="70" y2="346" stroke="#334155" stroke-width="2"/>
+            <path class="curve" d="M52 306 C110 284, 144 242, 184 220 C230 194, 250 220, 286 178 C334 122, 368 66, 514 72"/>
+            <line class="tangent" x1="125" y1="286" x2="430" y2="108"/>
+            <line class="secant" x1="128" y1="290" x2="438" y2="154"/>
+            <circle class="pointA" cx="260" cy="213" r="7"/>
+            <circle class="pointB" cx="260" cy="213" r="7"/>
+            <text x="278" y="207" fill="#e5e7eb" font-family="monospace" font-size="18">a</text>
+            <text x="382" y="142" fill="#fed7aa" font-family="monospace" font-size="15">a+h</text>
+            <text x="302" y="118" fill="#34d399" font-family="monospace" font-size="16">tiếp tuyến</text>
+          </svg>
+        </div>
+        <div class="hud">
+          <div class="metric"><strong>h → 0</strong>khoảng cách co lại</div>
+          <div class="metric"><strong>Δy/Δx</strong>độ dốc cát tuyến</div>
+          <div class="metric"><strong>f′(a)</strong>độ dốc tức thời</div>
+        </div>
+      </div>
+
+      <aside class="notes">
+        Nhấn mạnh câu chuyện cát tuyến trở thành tiếp tuyến: đạo hàm không phải phép chia cho 0, mà là giới hạn khi h tiến về 0.
+      </aside>
+    </section>
+
+    <section class="slide" aria-label="Slide 2">
+      <div>
+        <div class="eyebrow">Instant Velocity // Tangent Mode</div>
+        <h2>Công thức nhỏ, <span class="neon">sức mạnh lớn</span></h2>
+        <p class="lead">
+          Trên đường đua dữ liệu, vận tốc trung bình chỉ kể chuyện “từ đầu đến cuối”.
+          Đạo hàm bật chế độ slow-motion: nó hỏi xe đang nhanh thế nào <b>ngay tại một frame</b>.
+        </p>
+
+        <div class="panel formula" aria-label="Công thức đạo hàm">
+          <span class="dim">Định nghĩa:</span><br>
+          f′(a) = <span class="neon">lim</span><sub>h→0</sub>
+          <span class="dim">[</span>f(a+h) − f(a)<span class="dim">]</span> / h
+          <br><br>
+          <span class="dim">Ví dụ:</span> nếu f(x)=x² thì f′(a)=2a
+        </div>
+
+        <div class="bullets">
+          <div class="bullet"><span class="dot"></span><span><b>f′(a) &gt; 0</b>: đồ thị đang leo lên.</span></div>
+          <div class="bullet"><span class="dot"></span><span><b>f′(a) &lt; 0</b>: đồ thị đang lao xuống.</span></div>
+          <div class="bullet"><span class="dot"></span><span><b>f′(a) = 0</b>: có thể là điểm “đổi nhịp” như cực trị.</span></div>
+        </div>
+      </div>
+
+      <div class="racer" role="img" aria-label="Xe neon minh họa vận tốc tức thời">
+        <div class="ghostTicks"></div>
+        <div class="track"></div>
+        <div class="car"></div>
+        <div class="speedRing">
+          <div class="speedText">
+            <span>instant rate</span>
+            <b>f′(t)</b>
+            <span>độ dốc tại thời điểm t</span>
+          </div>
+        </div>
+        <svg viewBox="0 0 560 420" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%">
+          <path d="M42 346 C130 330, 188 284, 242 230 C310 162, 380 114, 520 82"
+                fill="none" stroke="rgba(34,211,238,.33)" stroke-width="3" stroke-dasharray="10 10">
+            <animate attributeName="stroke-dashoffset" from="120" to="0" dur="2s" repeatCount="indefinite"/>
+          </path>
+          <circle cx="333" cy="146" r="8" fill="#34d399" filter="drop-shadow(0 0 10px #34d399)">
+            <animate attributeName="r" values="7;13;7" dur="1.4s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="1;.45;1" dur="1.4s" repeatCount="indefinite"/>
+          </circle>
+          <line x1="260" y1="197" x2="420" y2="96" stroke="#34d399" stroke-width="4" stroke-linecap="round" filter="drop-shadow(0 0 10px #34d399)">
+            <animateTransform attributeName="transform" type="rotate" values="-5 333 146;5 333 146;-5 333 146" dur="3s" repeatCount="indefinite"/>
+          </line>
+          <text x="38" y="44" fill="#94a3b8" font-family="monospace" font-size="15">vận tốc tức thời = đạo hàm của vị trí theo thời gian</text>
+        </svg>
+      </div>
+
+      <aside class="notes">
+        Kết nối đạo hàm với vật lý: nếu vị trí là hàm theo thời gian, đạo hàm là vận tốc tức thời.
+      </aside>
+    </section>
+  </main>
+
+  <nav class="controls" aria-label="Điều khiển slide">
+    <button id="prev" type="button" aria-label="Slide trước">← Trước</button>
+    <span class="counter" id="counter">1 / 2</span>
+    <button id="next" type="button" aria-label="Slide sau">Tiếp →</button>
+  </nav>
+</div>
+
+<script>
+(function(){
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const prev = document.getElementById('prev');
+  const next = document.getElementById('next');
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+  let index = 0;
+
+  function show(i){
+    index = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s,n)=>s.classList.toggle('active', n === index));
+    counter.textContent = (index + 1) + ' / ' + slides.length;
+    progress.style.width = ((index + 1) / slides.length * 100) + '%';
+    prev.disabled = index === 0;
+    next.disabled = index === slides.length - 1;
+  }
+
+  prev.addEventListener('click',()=>show(index - 1));
+  next.addEventListener('click',()=>show(index + 1));
+  document.addEventListener('keydown',(e)=>{
+    if(e.key === 'ArrowLeft') show(index - 1);
+    if(e.key === 'ArrowRight') show(index + 1);
+    if(e.key === 'Home') show(0);
+    if(e.key === 'End') show(slides.length - 1);
+  });
+
+  show(0);
+})();
+</script>
+</body>
+</html>

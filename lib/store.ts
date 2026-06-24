@@ -119,6 +119,7 @@ interface WorkspaceState {
 
   saveHtml: (path: string, content: string) => Promise<void>;
   createHtml: (title: string, content: string, themeId?: string) => Promise<string>;
+  installDemoFiles: () => Promise<string[]>;
   createFolder: (parentPath: string, name: string) => Promise<void>;
   deleteFile: (path: string) => Promise<void>;
   renameFile: (path: string, newName: string) => Promise<void>;
@@ -465,6 +466,45 @@ export const useWorkspace = create<WorkspaceState>((set, get) => {
       await get().refresh();
       set({ openPath: virtual });
       return virtual;
+    },
+
+    async installDemoFiles() {
+      if (!get().roots.length) throw new Error("Chưa kết nối thư mục");
+      const root = get().roots[0];
+      const demoDir = "docs";
+      await ensureDir(root.handle, demoDir);
+
+      const demos = [
+        { title: "FastAPI Production Handbook", file: "fastapi-production.html", theme: "editorial-tech" },
+        { title: "Đạo hàm trực quan", file: "calculus-derivative.html", theme: "tech" },
+        { title: "GitHub Team Workflow", file: "git-workflow.html", theme: "playful" },
+      ];
+      const created: string[] = [];
+      const entries: Array<{ path: string; title: string; theme: string }> = [];
+
+      for (const demo of demos) {
+        const res = await fetch(`/demos/${demo.file}`);
+        if (!res.ok) throw new Error(`Không tải được file demo: ${demo.file}`);
+        const content = await res.text();
+        const relPath = await uniqueHtmlPath(root.handle, demoDir, demo.title);
+        await writeTextFile(root.handle, relPath, content.normalize("NFC"));
+        const virtual = toVirtual(root, relPath);
+        created.push(virtual);
+        entries.push({ path: virtual, title: demo.title, theme: demo.theme });
+      }
+
+      await mutate((m) => {
+        for (const entry of entries) {
+          m.files[entry.path] = { ...newMeta(), title: entry.title, theme: entry.theme };
+        }
+        return m;
+      });
+      await get().refresh();
+      set({
+        selection: { type: "folder", path: demoDir },
+        openPath: created[0] ?? null,
+      });
+      return created;
     },
 
     async createFolder(parentPath, name) {

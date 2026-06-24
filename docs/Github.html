@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GitHub trong làm việc nhóm, Agile & CI/CD</title>
+  <style>
+:root{--bg:#fff7ed;--fg:#3b1f0b;--muted:#9a6b4a;--line:#fed7aa;--accent:#f97316;--radius:20px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 "Segoe UI",system-ui,sans-serif}
+.container{max-width:840px;margin:0 auto;padding:48px 24px}
+h1{font-size:2.4rem;font-weight:900;color:var(--accent);margin:0 0 .3em}
+h2{font-size:1.5rem;font-weight:800}
+.card{background:#fff;border:2px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:0 6px 0 var(--line)}
+.pill{display:inline-block;background:var(--accent);color:#fff;border-radius:999px;padding:.25em .9em;font-weight:700}
+
+:root{
+  --pink:#ec4899;
+  --teal:#14b8a6;
+  --yellow:#facc15;
+  --purple:#8b5cf6;
+  --green:#22c55e;
+  --red:#ef4444;
+  --blue:#3b82f6;
+  --soft-pink:#fce7f3;
+  --soft-teal:#ccfbf1;
+  --soft-yellow:#fef9c3;
+  --soft-purple:#ede9fe;
+  --soft-blue:#dbeafe;
+}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(circle at 10% 10%, rgba(236,72,153,.12), transparent 28%),
+    radial-gradient(circle at 90% 20%, rgba(20,184,166,.14), transparent 28%),
+    radial-gradient(circle at 50% 90%, rgba(250,204,21,.18), transparent 30%),
+    var(--bg);
+}
+header.hero{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(135deg,#fff 0%,#fff7ed 45%,#ffedd5 100%);
+  border:3px solid var(--line);
+  border-radius:32px;
+  padding:34px;
+  box-shadow:0 10px 0 #fdba74;
+}
+.hero-grid{
+  display:grid;
+  grid-template-columns:1.3fr .7fr;
+  gap:24px;
+  align-items:center;
+}
+.subtitle{
+  font-size:1.12rem;
+  color:var(--muted);
+  margin:0 0 18px;
+}
+.badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:18px;
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border-radius:999px;
+  padding:8px 13px;
+  font-weight:800;
+  border:2px solid rgba(59,31,11,.08);
+}
+.badge.orange{background:#ffedd5;color:#9a3412}
+.badge.pink{background:var(--soft-pink);color:#9d174d}
+.badge.teal{background:var(--soft-teal);color:#115e59}
+.badge.purple{background:var(--soft-purple);color:#5b21b6}
+.section{
+  margin-top:34px;
+}
+.section-title{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:0 0 16px;
+}
+.icon-bubble{
+  width:46px;
+  height:46px;
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+  font-size:1.45rem;
+  color:white;
+  background:var(--accent);
+  box-shadow:0 5px 0 #fdba74;
+  flex:0 0 auto;
+}
+.grid{
+  display:grid;
+  gap:18px;
+}
+.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card h3{
+  margin:.1rem 0 .45rem;
+  font-size:1.15rem;
+}
+.card p{margin:.35rem 0}
+.card ul,.card ol{padding-left:1.2rem;margin:.5rem 0 0}
+.card li{margin:.25rem 0}
+.card.pink{background:var(--soft-pink);border-color:#f9a8d4;box-shadow:0 6px 0 #f9a8d4}
+.card.teal{background:var(--soft-teal);border-color:#5eead4;box-shadow:0 6px 0 #5eead4}
+.card.yellow{background:var(--soft-yellow);border-color:#fde047;box-shadow:0 6px 0 #fde047}
+.card.purple{background:var(--soft-purple);border-color:#c4b5fd;box-shadow:0 6px 0 #c4b5fd}
+.card.blue{background:var(--soft-blue);border-color:#93c5fd;box-shadow:0 6px 0 #93c5fd}
+.card.orange{background:#ffedd5;border-color:#fdba74;box-shadow:0 6px 0 #fdba74}
+.kbd{
+  display:inline-block;
+  font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
+  background:#431407;
+  color:#fff7ed;
+  padding:.1em .45em;
+  border-radius:8px;
+  font-size:.92em;
+  white-space:nowrap;
+}
+.code-block{
+  background:#2a1307;
+  color:#fff7ed;
+  border-radius:18px;
+  padding:16px;
+  overflow:auto;
+  border:2px solid #7c2d12;
+  font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
+  font-size:.92rem;
+  line-height:1.55;
+}
+.callout{
+  border-left:8px solid var(--accent);
+  background:#fff;
+  border-radius:18px;
+  padding:16px 18px;
+  margin:16px 0;
+}
+.table-wrap{overflow:auto}
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  overflow:hidden;
+  border:2px solid var(--line);
+  border-radius:18px;
+  background:#fff;
+}
+th,td{
+  text-align:left;
+  padding:12px 14px;
+  border-bottom:1px solid var(--line);
+  vertical-align:top;
+}
+th{
+  background:#ffedd5;
+  color:#7c2d12;
+}
+tr:last-child td{border-bottom:0}
+.avatar-scene{
+  min-height:260px;
+  position:relative;
+  display:grid;
+  place-items:center;
+}
+.octo-card{
+  width:230px;
+  height:230px;
+  border-radius:50px;
+  background:linear-gradient(145deg,#111827,#374151);
+  box-shadow:0 12px 0 rgba(17,24,39,.25);
+  position:relative;
+  transform:rotate(-4deg);
+}
+.octo-card:before,.octo-card:after{
+  content:"";
+  position:absolute;
+  top:38px;
+  width:60px;
+  height:60px;
+  background:#111827;
+  border-radius:18px 18px 4px 4px;
+}
+.octo-card:before{left:38px;transform:rotate(-18deg)}
+.octo-card:after{right:38px;transform:rotate(18deg)}
+.face{
+  position:absolute;
+  left:50%;
+  top:54%;
+  transform:translate(-50%,-50%);
+  width:142px;
+  height:108px;
+  background:#fff7ed;
+  border-radius:50% 50% 42% 42%;
+}
+.eye{
+  position:absolute;
+  top:45px;
+  width:13px;
+  height:20px;
+  background:#111827;
+  border-radius:999px;
+}
+.eye.left{left:43px}
+.eye.right{right:43px}
+.smile{
+  position:absolute;
+  left:50%;
+  top:70px;
+  width:46px;
+  height:18px;
+  transform:translateX(-50%);
+  border-bottom:4px solid #111827;
+  border-radius:0 0 999px 999px;
+}
+.float{
+  position:absolute;
+  display:grid;
+  place-items:center;
+  font-size:1.5rem;
+  width:54px;
+  height:54px;
+  border-radius:18px;
+  border:3px solid #fff;
+  box-shadow:0 7px 0 rgba(0,0,0,.1);
+  animation:bob 3s ease-in-out infinite;
+}
+.float.git{background:#ffedd5;left:5%;top:12%}
+.float.pr{background:var(--soft-pink);right:2%;top:18%;animation-delay:.4s}
+.float.ci{background:var(--soft-teal);left:11%;bottom:12%;animation-delay:.8s}
+.float.team{background:var(--soft-yellow);right:12%;bottom:7%;animation-delay:1.2s}
+@keyframes bob{
+  0%,100%{transform:translateY(0) rotate(0)}
+  50%{transform:translateY(-10px) rotate(5deg)}
+}
+.timeline{
+  position:relative;
+  padding-left:28px;
+}
+.timeline:before{
+  content:"";
+  position:absolute;
+  left:9px;
+  top:4px;
+  bottom:4px;
+  width:5px;
+  border-radius:999px;
+  background:linear-gradient(var(--accent),var(--pink),var(--teal));
+}
+.step{
+  position:relative;
+  margin:0 0 16px;
+  background:#fff;
+  border:2px solid var(--line);
+  border-radius:18px;
+  padding:14px 16px;
+}
+.step:before{
+  content:"";
+  position:absolute;
+  left:-26px;
+  top:19px;
+  width:17px;
+  height:17px;
+  border-radius:50%;
+  background:var(--accent);
+  border:3px solid #fff;
+}
+pre.mermaid{
+  background:#fff;
+  border:2px dashed #fdba74;
+  border-radius:20px;
+  padding:18px;
+  overflow:auto;
+}
+.checklist{
+  display:grid;
+  gap:10px;
+}
+.check{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  background:#fff;
+  border:2px solid var(--line);
+  border-radius:16px;
+  padding:12px;
+}
+.check span:first-child{
+  flex:0 0 auto;
+  width:28px;height:28px;
+  border-radius:10px;
+  display:grid;place-items:center;
+  color:#fff;font-weight:900;
+  background:var(--green);
+}
+footer{
+  margin-top:36px;
+  text-align:center;
+  color:var(--muted);
+}
+@media (max-width:760px){
+  .container{padding:28px 16px}
+  h1{font-size:2rem}
+  .hero-grid,.grid.two,.grid.three{grid-template-columns:1fr}
+  header.hero{padding:24px;border-radius:26px}
+  .avatar-scene{min-height:220px}
+  .octo-card{width:190px;height:190px}
+  .face{width:122px;height:94px}
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <span class="pill">Tài liệu nhập môn</span>
+          <h1>Làm việc với GitHub: từ cá nhân đến teamwork, Agile & CI/CD</h1>
+          <p class="subtitle">
+            GitHub không chỉ là nơi lưu code. Đây là “sân chơi trung tâm” để lập trình viên quản lý phiên bản,
+            trao đổi, review, theo dõi tiến độ, tự động kiểm thử và triển khai sản phẩm.
+          </p>
+          <div class="badges" aria-label="Các chủ đề chính">
+            <span class="badge orange">🌿 Git & Branch</span>
+            <span class="badge pink">🤝 Pull Request</span>
+            <span class="badge teal">⚙️ CI/CD</span>
+            <span class="badge purple">🏃 Agile</span>
+          </div>
+        </div>
+        <div class="avatar-scene" aria-label="Minh họa GitHub vui nhộn">
+          <div class="float git" title="Git">🌿</div>
+          <div class="float pr" title="Pull Request">🔁</div>
+          <div class="float ci" title="CI/CD">⚙️</div>
+          <div class="float team" title="Team">👥</div>
+          <div class="octo-card" aria-hidden="true">
+            <div class="face">
+              <div class="eye left"></div>
+              <div class="eye right"></div>
+              <div class="smile"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <div class="section-title">
+          <div class="icon-bubble">🧭</div>
+          <h2>1. GitHub là gì?</h2>
+        </div>
+        <div class="grid two">
+          <article class="card orange">
+            <h3>Git</h3>
+            <p>
+              Git là công cụ quản lý phiên bản. Nó ghi lại lịch sử thay đổi của mã nguồn để bạn có thể
+              quay lại phiên bản cũ, so sánh thay đổi và làm việc song song.
+            </p>
+          </article>
+          <article class="card teal">
+            <h3>GitHub</h3>
+            <p>
+              GitHub là nền tảng lưu trữ repository trên cloud, hỗ trợ làm việc nhóm qua Issues,
+              Pull Requests, Projects, Actions và Wiki.
+            </p>
+          </article>
+        </div>
+        <div class="callout">
+          <strong>Hiểu nhanh:</strong> Git giống như “máy ảnh chụp lịch sử code”, còn GitHub là “ngôi nhà chung”
+          nơi cả nhóm cùng xem, góp ý, kiểm tra và triển khai code.
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <div class="icon-bubble" style="background:var(--pink);box-shadow:0 5px 0 #f9a8d4">🌱</div>
+          <h2>2. Quy trình Git cơ bản</h2>
+        </div>
+        <div class="card">
+          <pre class="mermaid">
+flowchart LR
+  A["Clone repo<br/>Lấy mã nguồn"] --> B["Create branch<br/>Tạo nhánh làm việc"]
+  B --> C["Commit<br/>Ghi lại thay đổi"]
+  C --> D["Push<br/>Đẩy lên GitHub"]
+  D --> E["Pull Request<br/>Xin review & merge"]
+  E --> F["Merge<br/>Gộp vào nhánh chính"]
+          </pre>
+        </div>
+        <div class="grid two section">
+          <div class="card yellow">
+            <h3>Lệnh hay dùng</h3>
+            <div class="code-block">git clone &lt;url&gt;
+git checkout -b feature/login
+git status
+git add .
+git commit -m "Add login page"
+git push origin feature/login</div>
+          </div>
+          <div class="card pink">
+            <h3>Nguyên tắc nhỏ mà xịn</h3>
+            <ul>
+              <li>Commit nhỏ, rõ mục đích.</li>
+              <li>Tên branch dễ hiểu: <span class="kbd">feature/cart</span>, <span class="kbd">fix/login-bug</span>.</li>
+              <li>Không commit file nhạy cảm: token, password, secret key.</li>
+              <li>Luôn pull/rebase trước khi tạo Pull Request nếu nhánh đã cũ.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <div class="icon-bubble" style="background:var(--teal);box-shadow:0 5px 0 #5eead4">🤝</div>
+          <h2>3. Làm việc nhóm trên GitHub</h2>
+        </div>
+        <div class="grid three">
+          <article class="card blue">
+            <h3>Issues</h3>
+            <p>Dùng để ghi nhận task, bug, ý tưởng hoặc yêu cầu thay đổi.</p>
+            <p><strong>Nên có:</strong> mô tả, ảnh minh họa, bước tái hiện, tiêu chí hoàn thành.</p>
+          </article>
+          <article class="card pink">
+            <h3>Pull Requests</h3>
+            <p>Nơi thảo luận code trước khi gộp vào nhánh chính.</p>
+            <p><strong>Nên có:</strong> mô tả thay đổi, link issue, ảnh demo, checklist test.</p>
+          </article>
+          <article class="card teal">
+            <h3>Code Review</h3>
+            <p>Giúp bắt lỗi sớm, chia sẻ kiến thức và giữ chất lượng code.</p>
+            <p><strong>Nên review:</strong> logic, bảo mật, hiệu năng, readability, test.</p>
+          </article>
+        </div>
+
+        <div class="section card orange">
+          <h3>Luồng làm việc nhóm đề xuất</h3>
+          <div class="timeline">
+            <div class="step"><strong>1. Nhận task:</strong> chọn Issue trên board, đọc yêu cầu và hỏi lại nếu chưa rõ.</div>
+            <div class="step"><strong>2. Tạo branch:</strong> branch riêng cho từng task, ví dụ <span class="kbd">feature/payment-ui</span>.</div>
+            <div class="step"><strong>3. Code & commit:</strong> commit theo từng phần có nghĩa, tránh commit quá lớn.</div>
+            <div class="step"><strong>4. Mở Pull Request:</strong> mô tả thay đổi, gắn reviewer, chạy CI.</div>
+            <div class="step"><strong>5. Review & sửa:</strong> trao đổi lịch sự, sửa theo góp ý, cập nhật PR.</div>
+            <div class="step"><strong>6. Merge:</strong> chỉ merge khi đã pass test, được approve và không conflict.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <div class="icon-bubble" style="background:var(--purple);box-shadow:0 5px 0 #c4b5fd">🏃</div>
+          <h2>4. GitHub theo chuẩn Agile</h2>
+        </div>
+        <div class="card purple">
+          <p>
+            Agile là cách làm sản phẩm theo vòng lặp ngắn, nhận phản hồi thường xuyên và cải tiến liên tục.
+            GitHub hỗ trợ Agile rất tốt thông qua Issues, Labels, Milestones và Projects.
+          </p>
+        </div>
+
+        <div class="grid two section">
+          <article class="card">
+            <h3>Ánh xạ Agile vào GitHub</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Agile</th>
+                    <th>Trên GitHub</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Product Backlog</td>
+                    <td>Danh sách Issues/User Stories</td>
+                  </tr>
+                  <tr>
+                    <td>Sprint</td>
+                    <td>Milestone hoặc Project iteration</td>
+                  </tr>
+                  <tr>
+                    <td>Task Board</td>
+                    <td>GitHub Projects: Todo, In Progress, Review, Done</td>
+                  </tr>
+                  <tr>
+                    <td>Definition of Done</td>
+                    <td>Checklist trong Issue/PR + CI pass + review approve</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+          <article class="card yellow">
+            <h3>Mẫu User Story</h3>
+            <p><strong>Là một</strong> người dùng,</p>
+            <p><strong>tôi muốn</strong> đăng nhập bằng email,</p>
+            <p><strong>để</strong> truy cập tài khoản cá nhân.</p>
+            <hr style="border:0;border-top:2px dashed #facc15;margin:14px 0">
+            <p><strong>Acceptance Criteria:</strong></p>
+            <ul>
+              <li>Nhập email/password hợp lệ thì đăng nhập thành công.</li>
+              <li>Sai thông tin thì hiển thị lỗi rõ ràng.</li>
+              <li>Có test cho trường hợp thành công và thất bại.</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="card section">
+          <h3>Minh họa board Agile</h3>
+          <pre class="mermaid">
+flowchart LR
+  A["📝 Backlog<br/>Ý tưởng / yêu cầu"] --> B["🎯 Sprint Todo<br/>Đã chọn cho sprint"]
+  B --> C["🚧 In Progress<br/>Đang làm"]
+  C --> D["🔍 Review<br/>PR chờ duyệt"]
+  D --> E["✅ Done<br/>Hoàn thành"]
+  D --> C
+          </pre>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <div class="icon-bubble" style="background:var(--green);box-shadow:0 5px 0 #86efac">⚙️</div>
+          <h2>5. CI/CD với GitHub Actions</h2>
+        </div>
+        <div class="grid two">
+          <article class="card teal">
+            <h3>CI là gì?</h3>
+            <p>
+              <strong>Continuous Integration</strong> là tự động build, lint, test mỗi khi có code mới.
+              Mục tiêu: phát hiện lỗi sớm trước khi merge.
+            </p>
+          </article>
+          <article class="card orange">
+            <h3>CD là gì?</h3>
+            <p>
+              <strong>Continuous Delivery/Deployment</strong> là tự động chuẩn bị hoặc triển khai ứng dụng
+              lên môi trường staging/production sau khi code đạt chuẩn.
+            </p>
+          </article>
+        </div>
+
+        <div class="card section">
+          <h3>Pipeline CI/CD trực quan</h3>
+          <pre class="mermaid">
+flowchart TD
+  A["Developer push code"] --> B["GitHub Actions trigger"]
+  B --> C["Install dependencies"]
+  C --> D["Lint & Format check"]
+  D --> E["Run tests"]
+  E --> F["Build app"]
+  F --> G{"Tất cả pass?"}
+  G -- "Không" --> H["❌ Báo lỗi trong PR"]
+  G -- "Có" --> I["✅ Cho phép merge"]
+  I --> J["Deploy staging/production"]
+          </pre>
+        </div>
+
+        <div class="card blue section">
+          <h3>Ví dụ workflow GitHub Actions cho Node.js</h3>
+          <div class="code-block">name: CI<br>
+<br>
+on:<br>
+&nbsp;&nbsp;pull_request:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;branches: [main]<br>
+&nbsp;&nbsp;push:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;branches: [main]<br>
+<br>
+jobs:<br>
+&nbsp;&nbsp;test:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;runs-on: ubuntu-latest<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;steps:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- name: Checkout code<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uses: actions/checkout@v4<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- name: Setup Node.js<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uses: actions/setup-node@v4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node-version: 20<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- name: Install dependencies<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;run: npm ci<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- name: Run lint<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;run: npm run lint<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- name: Run tests<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;run: npm test<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- name: Build<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;run: npm run build</div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <div class="icon-bubble" style="background:var(--red);box-shadow:0 5px 0 #fca5a5">🛡️</div>
+          <h2>6. Quy ước chất lượng nên áp dụng</h2>
+        </div>
+        <div class="checklist">
+          <div class="check"><span>✓</span><div><strong>Branch protection:</strong> bảo vệ nhánh <span class="kbd">main</span>, không cho push trực tiếp.</div></div>
+          <div class="check"><span>✓</span><div><strong>Required reviews:</strong> ít nhất 1–2 người approve trước khi merge.</div></div>
+          <div class="check"><span>✓</span><div><strong>Required status checks:</strong> CI phải pass trước khi merge.</div></div>
+          <div class="check"><span>✓</span><div><strong>Conventional Commits:</strong> dùng tiền tố như <span class="kbd">feat:</span>, <span class="kbd">fix:</span>, <span class="kbd">docs:</span>, <span class="kbd">refactor:</span>.</div></div>
+          <div class="check"><span>✓</span><div><strong>PR template:</strong> chuẩn hóa mô tả thay đổi, cách test, ảnh demo, checklist.</div></div>
+          <div class="check"><span>✓</span><div><strong>Secrets management:</strong> lưu token trong GitHub Secrets, không đưa vào code.</div></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <div class="icon-bubble">🧩</div>
+          <h2>7. Mẫu quy trình hoàn chỉnh cho team</h2>
+        </div>
+        <div class="card">
+          <pre class="mermaid">
+sequenceDiagram
+  autonumber
+  participant PO as Product Owner
+  participant Dev as Developer
+  participant GH as GitHub
+  participant Rev as Reviewer
+  participant CI as GitHub Actions
+  participant Prod as Production
+
+  PO->>GH: Tạo Issue/User Story
+  Dev->>GH: Tạo branch từ main
+  Dev->>GH: Push commit
+  Dev->>GH: Mở Pull Request
+  GH->>CI: Kích hoạt workflow
+  CI-->>GH: Kết quả lint/test/build
+  Rev->>GH: Review & comment
+  Dev->>GH: Sửa code nếu cần
+  Rev->>GH: Approve
+  GH->>GH: Merge vào main
+  GH->>CI: Deploy pipeline
+  CI->>Prod: Triển khai bản mới
+          </pre>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <div class="icon-bubble" style="background:var(--yellow);color:#3b1f0b;box-shadow:0 5px 0 #fde047">🚀</div>
+          <h2>8. Checklist học nhanh</h2>
+        </div>
+        <div class="grid two">
+          <article class="card pink">
+            <h3>Người mới nên luyện</h3>
+            <ol>
+              <li>Tạo repo cá nhân.</li>
+              <li>Clone repo về máy.</li>
+              <li>Tạo branch mới.</li>
+              <li>Commit và push thay đổi.</li>
+              <li>Mở Pull Request.</li>
+              <li>Giải quyết conflict đơn giản.</li>
+            </ol>
+          </article>
+          <article class="card teal">
+            <h3>Team nên thống nhất</h3>
+            <ol>
+              <li>Quy tắc đặt tên branch.</li>
+              <li>Quy tắc commit message.</li>
+              <li>Definition of Done.</li>
+              <li>Checklist review code.</li>
+              <li>Quy trình CI/CD.</li>
+              <li>Ai có quyền merge/deploy.</li>
+            </ol>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="card orange">
+          <h2 style="margin-top:0">Tóm tắt siêu ngắn</h2>
+          <p>
+            Dùng GitHub hiệu quả nghĩa là: <strong>chia việc rõ bằng Issues</strong>,
+            <strong>làm code trên branch riêng</strong>, <strong>review qua Pull Request</strong>,
+            <strong>quản lý sprint bằng Projects/Milestones</strong>, và
+            <strong>tự động kiểm thử - triển khai bằng GitHub Actions</strong>.
+          </p>
+          <p>
+            Khi nhóm làm đúng quy trình, code an toàn hơn, giao tiếp rõ hơn và sản phẩm ra phiên bản mới nhanh hơn.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>🎉 Học GitHub vui vẻ — commit nhỏ, review kỹ, deploy tự tin!</p>
+    </footer>
+  </div>
+<script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>
